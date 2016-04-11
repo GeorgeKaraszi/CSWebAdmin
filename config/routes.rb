@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
   get 'welcome/index'
+  get "/contact" => "welcome#contact"
+
 
   devise_for :users, :path => '', :path_names => {:sign_in => 'login', :sign_out => 'logout'}
 

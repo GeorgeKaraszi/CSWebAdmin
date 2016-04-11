@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="MySQL - cswebadmin@localhost" uuid="fb947379-0390-4010-979f-80e7ec288dfc">
+      <secret-storage>master_key</secret-storage>
+      <user-name>root</user-name>
+      <schema-pattern>cswebadmin.*</schema-pattern>
+      <default-schemas>cswebadmin.*</default-schemas>
+    </data-source>
+  </component>
+</project>

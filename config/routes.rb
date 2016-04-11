@@ -1,11 +1,13 @@
 Rails.application.routes.draw do
 
-  devise_for :users
+  get 'welcome/index'
+
+  devise_for :users, :path => '', :path_names => {:sign_in => 'login', :sign_out => 'logout'}
 
   authenticated :user do
     root to: 'welcome#index', as: :authenticated_root
   end
-  root :to => 'users#sign_in'
+  root :to => redirect('login')
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

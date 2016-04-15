@@ -1,0 +1,35 @@
+<h1>List All users by name</h1>
+
+
+<table>
+  <tbody>
+    <tr>New User</tr>
+  </tbody>
+</table>
+
+<!-- Loop through listed user base -->
+<table class="table table-hover">
+
+  <thead>
+  <tr>
+    <th class="col-md-10">Username</th>
+    <th>Other Options</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @users.each do |user| %>
+  <tr>
+    <% if user.uid.kind_of?(Array) %>
+        <td><%= link_to "#{user.uid.first}", edit_user_path(user) %></td>
+    <% else %>
+        <td><%= link_to "#{user.uid}", edit_user_path(user) %></td>
+    <% end %>
+    <td>EDIT VIEW INFO</td>
+  </tr>
+
+  <% end %>
+  </tbody>
+
+
+</table>

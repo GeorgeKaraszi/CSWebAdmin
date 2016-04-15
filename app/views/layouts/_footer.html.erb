@@ -7,9 +7,9 @@
       <li><%= link_to "About",   '#' %></li>
       <li><%= link_to "Contact", contact_path %></li>
       <% if user_signed_in? %>
-           <li><%= link_to "Log out", 'logout', :method => :delete %></li>
+           <li><%= link_to "Log out", '/logout', :method => :delete %></li>
       <% else %>
-          <li><%= link_to "Log in", 'login'%></li>
+          <li><%= link_to "Log in", '/login'%></li>
       <% end %>
     </ul>
   </nav>

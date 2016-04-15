@@ -1,13 +1,13 @@
 <header class="navbar navbar-fixed-top navbar-inverse">
   <div class="container">
-    <%= link_to "LDAP Web-Manager", '#', id: "logo" %>
+    <%= link_to "LDAP Web-Manager", root_path, id: "logo" %>
     <nav>
       <ul class="nav navbar-nav navbar-right">
         <% if user_signed_in? %>
             <li><%= link_to "Home", root_path %></li>
-            <li><%= link_to "Manage Groups", '#' %></li>
-            <li><%= link_to "Manage Users", '#' %></li>
-            <li><%= link_to "Log out", 'logout', :method => :delete %></li>
+            <li><%= link_to "Manage Groups", '/groups' %></li>
+            <li><%= link_to "Manage Users", '/users' %></li>
+            <li><%= link_to "Log out", '/logout', :method => :delete %></li>
         <% else %>
             <li><%= link_to "Log in", 'login' %></li>
         <% end %>

@@ -1,15 +1,33 @@
 Rails.application.routes.draw do
 
+#  get 'groups/index'
+
+#  get 'groups/new'
+
+#  get 'groups/show'
+
+#  get 'groups/edit'
+
   get 'welcome/index'
   get "/contact" => "welcome#contact"
 
 
   devise_for :users, :path => '', :path_names => {:sign_in => 'login', :sign_out => 'logout'}
 
+
   authenticated :user do
     root to: 'welcome#index', as: :authenticated_root
+    #get 'users/new'
+
+    #get 'users/show'
+
+    #get 'users/edit'
+    resources :users
+    resources :groups
+
   end
   root :to => redirect('login')
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

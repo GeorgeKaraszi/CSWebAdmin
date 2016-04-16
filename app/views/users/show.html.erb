@@ -1,28 +1,23 @@
-<h1>Display [ID] User information here</h1>
+<h1><%= "#{@users.uid.first.upcase} - Information Page" %></h1>
+
+<%= button_to 'Edit', edit_user_path(@users.dn), :class => 'btn btn-warning', method: :get%>
+<%= button_to 'Delete', user_path(@users.dn), :class => 'btn btn-danger', method: :get%>
 
 <table class = "table">
   <tbody>
-  <tr>
-    <td class="col-md-3">Username</td>
-    <td>George</td>
-  </tr>
-  <tr>
-    <td class="col-md-3">Email</td>
-    <td>George@myemail.com</td>
-  </tr>
-  <tr>
-    <td class="col-md-3">Directory</td>
-    <td>/homes/csgeorge</td>
-  </tr>
-  <tr>
-    <td class="col-md-3">UidNumber</td>
-    <td>123</td>
-  </tr>
-  <tr>
-    <td class="col-md-3">GidNumber</td>
-    <td>321</td>
-  </tr>
-  </tbody>
-
+    <% @users.each do |attribute, value| %>
+      <tr>
+        <td class="col-md-3"><%= "#{attribute}:" %></td>
+        <td> <ul> <% value.each do |val| %>
+                  <li><%= val %></li>
+          <% end %></ul></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td class="col-md-3">Member of:</td>
+      <td> <ul> <% @groups.each do |entry| %>
+            <li><%= entry.dn %></li>
+        <% end %></ul></td>
+    </tr>
 </table>
 

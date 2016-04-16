@@ -8,7 +8,11 @@ class User < ActiveRecord::Base
 
 
   def self.all_users
-    resource = LdapAdmin::Administration.get_all_users
+    return LdapAdmin::Administration.get_all_users
+  end
+
+  def self.find_groups(dn)
+    return LdapAdmin::Administration.get_user_groups(:dn => dn)
   end
 
 end

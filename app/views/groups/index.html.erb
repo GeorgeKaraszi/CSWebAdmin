@@ -1,2 +1,44 @@
-<h1>Groups#index</h1>
-<p>Find me in app/views/groups/index.html.erb</p>
+<h1>All Groups</h1>
+
+
+<table>
+  <tbody>
+  <tr>
+      <%= button_to 'New Group', edit_group_path(1), :class => 'btn btn-success', method: :get%>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Loop through listed user base -->
+<table class="table table-hover">
+
+  <thead>
+  <tr>
+    <th class="col-md-10">Group Name</th>
+    <th></th>
+    <th>Options</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @groups.each do |group| %>
+      <tr>
+        <td><%= link_to "#{group.cn.first}", group_path(group.dn) %></td>
+        <td>
+          <%= button_to 'View', group_path(group.dn), :class => 'btn btn-primary', method: :get%>
+        </td>
+        <td>
+          <%= button_to 'Edit', edit_group_path(group.dn), :class => 'btn btn-warning', method: :get%>
+         </td>
+         <td>
+          <%= button_to 'Delete', group_path(group.dn), :class => 'btn btn-danger', method: :get%>
+         </td>
+
+        </td>
+      </tr>
+
+  <% end %>
+  </tbody>
+
+
+</table>

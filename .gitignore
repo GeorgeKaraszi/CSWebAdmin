@@ -11,3 +11,6 @@
 /log/*
 !/log/.keep
 /tmp
+.idea
+/config/*.yml
+/app/assets/javascripts/application.js

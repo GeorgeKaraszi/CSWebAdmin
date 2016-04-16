@@ -31,9 +31,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-
+gem 'tzinfo-data'
 gem 'devise', '~> 3.5', '>= 3.5.6'
-gem 'ldap_auth'
 gem 'ldap-admin'
 gem 'bootstrap-sass',       '3.2.0.0'
 

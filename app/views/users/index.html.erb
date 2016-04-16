@@ -1,9 +1,11 @@
-<h1>List All users by name</h1>
+<h1>All Users</h1>
 
 
 <table>
   <tbody>
-    <tr>New User</tr>
+  <tr>
+    <%= button_to 'New User', edit_user_path(1), :class => 'btn btn-success', method: :get%>
+  </tr>
   </tbody>
 </table>
 
@@ -12,20 +14,25 @@
 
   <thead>
   <tr>
-    <th class="col-md-10">Username</th>
-    <th>Other Options</th>
+    <th class="col-md-10">User Name</th>
+    <th></th>
+    <th>Options</th>
   </tr>
   </thead>
 
   <tbody>
   <% @users.each do |user| %>
   <tr>
-    <% if user.uid.kind_of?(Array) %>
-        <td><%= link_to "#{user.uid.first}", edit_user_path(user) %></td>
-    <% else %>
-        <td><%= link_to "#{user.uid}", edit_user_path(user) %></td>
-    <% end %>
-    <td>EDIT VIEW INFO</td>
+    <td><%= link_to "#{user.uid.first}", user_path(user.dn) %></td>
+    <td>
+      <%= button_to 'View', user_path(user.dn), :class => 'btn btn-primary', method: :get%>
+    </td>
+    <td>
+      <%= button_to 'Edit', edit_user_path(user.dn), :class => 'btn btn-warning', method: :get%>
+    </td>
+    <td>
+      <%= button_to 'Delete', user_path(user.dn), :class => 'btn btn-danger', method: :get%>
+    </td>
   </tr>
 
   <% end %>

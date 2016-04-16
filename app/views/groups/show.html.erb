@@ -1,2 +1,19 @@
-<h1>Groups#show</h1>
-<p>Find me in app/views/groups/show.html.erb</p>
+<h1><%= "#{@groups.cn.first.upcase} - Information Page" %></h1>
+
+<%= button_to 'Edit', edit_group_path(@groups.dn), :class => 'btn btn-warning', method: :get%>
+<%= button_to 'Delete', group_path(@groups.dn), :class => 'btn btn-danger', method: :get%>
+
+
+<table class = "table">
+  <tbody>
+  <% @groups.each do |attribute, value| %>
+      <tr>
+        <td class="col-md-3"><%= "#{attribute}:" %></td>
+        <td> <ul>
+          <% value.each do |v| %>
+              <li><%= "#{v}" %></li>
+          <% end %>
+        </ul></td>
+      </tr>
+  <% end %>
+  </table>

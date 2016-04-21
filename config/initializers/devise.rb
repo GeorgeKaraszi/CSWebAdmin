@@ -5,7 +5,7 @@ Devise.setup do |config|
    config.ldap_logger = true
    config.ldap_create_user = true
    config.ldap_update_password = false
-  # config.ldap_config = "#{Rails.root}/config/ldap.yml"
+   config.ldap_config = "#{Rails.root}/config/ldap_auth.yml"
    config.ldap_check_group_membership = true
   # config.ldap_check_group_membership_without_admin = false
   # config.ldap_check_attributes = false

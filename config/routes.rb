@@ -1,13 +1,5 @@
 Rails.application.routes.draw do
 
-#  get 'groups/index'
-
-#  get 'groups/new'
-
-#  get 'groups/show'
-
-#  get 'groups/edit'
-
   get 'welcome/index'
   get "/contact" => "welcome#contact"
 
@@ -17,12 +9,9 @@ Rails.application.routes.draw do
 
   authenticated :user do
     root to: 'welcome#index', as: :authenticated_root
-    #get 'users/new'
 
-    #get 'users/show'
-
-    resources :users
-    resources :groups
+    resources :ldap_users
+    resources :ldap_groups
 
   end
   root :to => redirect('login')

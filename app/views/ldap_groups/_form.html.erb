@@ -1,0 +1,17 @@
+<%= form_for(@ldap_group) do |f| %>
+  <% if @ldap_group.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@ldap_group.errors.count, "error") %> prohibited this ldap_group from being saved:</h2>
+
+      <ul>
+      <% @ldap_group.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

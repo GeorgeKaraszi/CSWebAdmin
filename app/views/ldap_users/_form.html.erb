@@ -1,0 +1,17 @@
+<%= form_for(@ldap_user) do |f| %>
+  <% if @ldap_user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@ldap_user.errors.count, "error") %> prohibited this ldap_user from being saved:</h2>
+
+      <ul>
+      <% @ldap_user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

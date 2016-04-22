@@ -10,6 +10,7 @@ class LdapGroupsController < ApplicationController
   # GET /ldap_groups/1
   # GET /ldap_groups/1.json
   def show
+    set_ldap_group
   end
 
   # GET /ldap_groups/new

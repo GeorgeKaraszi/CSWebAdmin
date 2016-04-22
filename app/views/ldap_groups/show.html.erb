@@ -1,4 +1,17 @@
 <p id="notice"><%= notice %></p>
-
 <%= link_to 'Edit', edit_ldap_group_path(@ldap_group) %> |
 <%= link_to 'Back', ldap_groups_path %>
+<table class='table table-hover'>
+  <thead>
+  <th>Attribute</th>
+  <th>Value/s</th>
+  </thead>
+  <tbody>
+  <% @ldap_group.attributes.each do |key,value| %>
+  <tr>
+    <td><%= "#{key} " %></td>
+    <td><%= "#{value} " %></td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>

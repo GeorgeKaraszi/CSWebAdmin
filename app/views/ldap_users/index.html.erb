@@ -18,7 +18,7 @@
       <tr>
         <td><%= ldap_user.cn %></td>
         <td><%= ldap_user['uidNumber'] %></td>
-        <td><%= link_to 'Show', ldap_user.cn %></td>
+        <td><%= link_to 'Show', ldap_user_path(ldap_user['dn']) %></td>
         <td><%= link_to 'Edit', edit_ldap_user_path(ldap_user.cn) %></td>
         <td><%= link_to 'Destroy', ldap_user.cn, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>

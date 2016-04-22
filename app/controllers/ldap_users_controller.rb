@@ -10,6 +10,7 @@ class LdapUsersController < ApplicationController
   # GET /ldap_users/1
   # GET /ldap_users/1.json
   def show
+    @ldap_user = set_ldap_user
   end
 
   # GET /ldap_users/new

@@ -34,9 +34,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'tzinfo-data'
 gem 'devise', '~> 3.5', '>= 3.5.6'
 gem 'ldap-admin'
-gem 'bootstrap-sass',       '3.2.0.0'
 gem 'net-ldap', '~> 0.14.0'
 gem 'activeldap', :require => 'active_ldap/railtie'
+gem 'bootstrap-sass',       '3.2.0.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

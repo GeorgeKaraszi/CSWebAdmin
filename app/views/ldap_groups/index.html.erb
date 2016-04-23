@@ -19,7 +19,7 @@
         <td><%= ldap_group.cn %></td>
         <td><%= ldap_group['gidNumber'] %></td>
         <td><%= link_to 'Show', ldap_group_path(ldap_group['dn']) %></td>
-        <td><%= link_to 'Edit', edit_ldap_group_path(ldap_group.cn) %></td>
+        <td><%= link_to 'Edit', edit_ldap_group_path(ldap_group['dn']) %></td>
         <td><%= link_to 'Destroy', ldap_group.cn, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>

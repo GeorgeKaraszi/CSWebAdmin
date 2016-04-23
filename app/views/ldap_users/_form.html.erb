@@ -1,7 +1,7 @@
-<%= form_for(@ldap_user) do |f| %>
+<%= form_for(@ldap_user, html: {class: 'form-horizontal'}) do |f| %>
   <% if @ldap_user.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@ldap_user.errors.count, "error") %> prohibited this ldap_user from being saved:</h2>
+      <h2><%= pluralize(@ldap_user.errors.count, 'error') %> prohibited this ldap_user from being saved:</h2>
 
       <ul>
       <% @ldap_user.errors.full_messages.each do |message| %>
@@ -10,6 +10,9 @@
       </ul>
     </div>
   <% end %>
+
+
+    <%= render 'user_fields', f: f %>
 
   <div class="actions">
     <%= f.submit %>

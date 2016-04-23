@@ -8,10 +8,14 @@
   </thead>
   <tbody>
   <% @ldap_group.attributes.each do |key,value| %>
-  <tr>
-    <td><%= "#{key} " %></td>
-    <td><%= "#{value} " %></td>
-  </tr>
+      <tr>
+        <td><%= "#{key} " %></td>
+        <td><ul class='list-unstyled'>
+          <% to_array_helper(value).each do |element| %>
+              <li><%= "#{element}" %></li>
+          <% end %>
+        </ul></td>
+      </tr>
   <% end %>
   </tbody>
 </table>

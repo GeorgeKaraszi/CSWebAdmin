@@ -32,7 +32,7 @@ class LdapUsersController < ApplicationController
         format.html { redirect_to @ldap_user, notice: 'Ldap user was successfully created.' }
         format.json { render :show, status: :created, location: @ldap_user }
       else
-        format.html { render :new }
+        format.html { render :new, alert: @ldap_user.errors.full_message }
         format.json { render json: @ldap_user.errors, status: :unprocessable_entity }
       end
     end
@@ -42,12 +42,12 @@ class LdapUsersController < ApplicationController
   # PATCH/PUT /ldap_users/1.json
   def update
     respond_to do |format|
-      if @ldap_user.update(ldap_user_params)
+      if @ldap_user.update_ldap(ldap_user_params)
         format.html { redirect_to @ldap_user, notice: 'Ldap user was successfully updated.' }
         format.json { render :show, status: :ok, location: @ldap_user }
       else
         format.html { render :edit }
-        format.json { render json: @ldap_user.errors, status: :unprocessable_entity }
+        format.json { render alert: @ldap_user.errors.full_messages, status: :unprocessable_entity }
       end
     end
   end
@@ -70,6 +70,6 @@ class LdapUsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ldap_user_params
-      params.fetch(:ldap_user, {})
+      params.require('user_data')
     end
 end

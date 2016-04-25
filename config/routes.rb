@@ -17,8 +17,8 @@ Rails.application.routes.draw do
     end
     resources :ldap_groups
     #match '/request/:type:name:excludes' => 'request#export', via: :get
-    post '/requests' => 'requests#export'
-    get 'requests' => 'requests#export'
+    get '/requests' => 'requests#export'
+    #get 'requests' => 'requests#export'
 
   end
   root :to => redirect('login')

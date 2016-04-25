@@ -4,6 +4,11 @@ module ApplicationHelper
     input.kind_of?(Array) ? input : Array(input)
   end
 
+  # def link_to_add_fields(name, export_path, ouname)
+  #   link_to(name, '#', class: 'add_fields', data: {url: export_path, ou: ouname})
+  # end
+
+
   def link_to_add_fields(name, export_path, ouname, f, association)
     new_object = f.object.send(association).klass.new
     id = new_object.object_id
@@ -12,5 +17,4 @@ module ApplicationHelper
     end
     link_to(name, '#', class: 'add_fields', data: {url: export_path, ou: ouname, id: id, fields: fields.gsub('\n','')})
   end
-
 end

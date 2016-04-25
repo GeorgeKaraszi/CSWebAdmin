@@ -15,10 +15,10 @@ end
     ret = true
     hash_params.each do |key, value|
       value.each do |original, modified|
-        attribute_update(key,original,modified) if original != modified
+        #attribute_update(key,original,modified) if original != modified
       end
     end
-    self.save
+    #self.save
   end
 
   private

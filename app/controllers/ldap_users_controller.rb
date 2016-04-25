@@ -1,6 +1,5 @@
 class LdapUsersController < ApplicationController
   before_action :set_ldap_user, only: [:show, :edit, :export, :update, :destroy]
-
   # GET /ldap_users
   # GET /ldap_users.json
   def index

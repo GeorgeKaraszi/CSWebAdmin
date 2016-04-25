@@ -10,8 +10,15 @@ Rails.application.routes.draw do
   authenticated :user do
     root to: 'welcome#index', as: :authenticated_root
 
-    resources :ldap_users
+    resources :ldap_users do
+      member do
+        get 'export'
+      end
+    end
     resources :ldap_groups
+    #match '/request/:type:name:excludes' => 'request#export', via: :get
+    post '/requests' => 'requests#export'
+    get 'requests' => 'requests#export'
 
   end
   root :to => redirect('login')

@@ -2,6 +2,11 @@ class LdapUser < ActiveLdap::Base
 ldap_mapping dn_attribute: 'uid',
              prefix: 'ou=People'
 
+
+def my_exclude
+  self.attributes.keys.select {|k| k if k != 'objectClass'}
+end
+
   def to_model
     self
   end

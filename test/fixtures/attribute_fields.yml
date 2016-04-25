@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  attribute: MyString
+  field_type: MyString
+  attribute_type_id: 
+
+two:
+  attribute: MyString
+  field_type: MyString
+  attribute_type_id: 

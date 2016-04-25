@@ -11,7 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160411145731) do
+ActiveRecord::Schema.define(version: 20160423182253) do
+
+  create_table "attribute_fields", force: :cascade do |t|
+    t.string   "keyattribute",      limit: 255, null: false
+    t.string   "field_type",        limit: 255, null: false
+    t.integer  "attribute_type_id", limit: 4
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "attribute_fields", ["attribute_type_id"], name: "index_attribute_fields_on_attribute_type_id", using: :btree
+
+  create_table "attribute_types", force: :cascade do |t|
+    t.string   "name",       limit: 255, null: false
+    t.string   "ou_type",    limit: 255, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "login",               limit: 255, default: "", null: false
@@ -27,4 +44,5 @@ ActiveRecord::Schema.define(version: 20160411145731) do
 
   add_index "users", ["login"], name: "index_users_on_login", unique: true, using: :btree
 
+  add_foreign_key "attribute_fields", "attribute_types"
 end

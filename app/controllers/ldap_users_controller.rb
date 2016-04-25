@@ -1,5 +1,5 @@
 class LdapUsersController < ApplicationController
-  before_action :set_ldap_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_ldap_user, only: [:show, :edit, :export, :update, :destroy]
 
   # GET /ldap_users
   # GET /ldap_users.json
@@ -62,10 +62,16 @@ class LdapUsersController < ApplicationController
     end
   end
 
+  def export
+    respond_to do |format|
+      format.json { render json: @ldap_user.my_exclude }
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_ldap_user
-      @ldap_user = LdapUser.find(params[:id])
+       @ldap_user = LdapUser.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

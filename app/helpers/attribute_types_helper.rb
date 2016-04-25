@@ -1,0 +1,4 @@
+module AttributeTypesHelper
+
+
+end

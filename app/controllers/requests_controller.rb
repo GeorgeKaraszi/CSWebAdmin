@@ -12,14 +12,14 @@ class RequestsController < ApplicationController
     @request = Request.request_by(request_params)
 
     respond_to do |format|
-      format.js {render json: @request}
+      format.json {render json: @request}
     end
   end
 
   private
 
   def request_params
-    params.require(:request_data).permit(:type, :name, :excludes)
+    JSON.load(params.require(:request_data))
   end
 
 end

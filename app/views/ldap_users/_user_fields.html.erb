@@ -8,3 +8,9 @@
     </div>
   </div>
 <% end %>
+
+<%= f.fields_for :attribute_fields do |builder| %>
+  <%= render 'attribute_field fields'%>
+<% end %>
+
+<%= link_to_add_fields 'Add Attribute', export_ldap_user_path(@ldap_user['dn']), 'People',  f, :attribute_fields%>

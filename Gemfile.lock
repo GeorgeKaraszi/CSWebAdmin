@@ -191,6 +191,7 @@ DEPENDENCIES
   devise (~> 3.5, >= 3.5.6)
   jbuilder (~> 2.0)
   jquery-rails
+  json (~> 1.8, >= 1.8.3)
   ldap-admin
   mysql2 (>= 0.3.13, < 0.5)
   rails (= 4.2.6)

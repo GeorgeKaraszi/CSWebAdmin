@@ -11,6 +11,20 @@ end
     self
   end
 
+  def available_attributes(att_name)
+    excludeList = my_exclude
+    query = AttributeField.joins(:attribute_type).where("attribute_types.name = '#{att_name}' ")
+
+    if excludeList.blank?
+      query.select(:keyattribute, :field_type)
+    else
+      query.select(:keyattribute, :field_type).where.not(:keyattribute => excludeList)
+    end
+
+  end
+
+
+
   def update_ldap(hash_params)
     ret = true
     hash_params.each do |key, value|

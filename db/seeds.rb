@@ -86,6 +86,11 @@ queryInsert = [
         :attribute_type_id => user_id,
         :keyattribute => 'homeDirectory',
         :field_type => 'text_box'
+    },
+    {
+        :attribute_type_id => user_id,
+        :keyattribute => 'firstName',
+        :field_type => 'text_box'
     }
 ]
 

@@ -63,7 +63,7 @@ class LdapUsersController < ApplicationController
 
   def export
     respond_to do |format|
-      format.json { render json: @ldap_user.my_exclude }
+      format.json { render json: @ldap_user.available_attributes('People') }
     end
   end
 

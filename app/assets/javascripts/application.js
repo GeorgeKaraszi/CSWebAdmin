@@ -12,6 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-// require turbolinks
+//= require angular
 //= jquery-readyselector
 //= require_tree .

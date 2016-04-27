@@ -19,8 +19,8 @@ gem 'bootstrap-sass',       '3.2.0.0'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
+
 # Use angular as a Javascript library
-gem 'angularjs-rails', '~> 1.5'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
@@ -41,7 +41,7 @@ gem 'tzinfo-data'
 gem 'devise', '~> 3.5', '>= 3.5.6'
 gem 'ldap-admin'
 gem 'activeldap', :require => 'active_ldap/railtie'
-gem 'json', '~> 1.8', '>= 1.8.3'
+gem 'angularjs-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

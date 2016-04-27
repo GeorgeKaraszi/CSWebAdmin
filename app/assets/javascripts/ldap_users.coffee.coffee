@@ -1,7 +1,5 @@
 $(".ldap_users.edit").ready ->
   excludeList = new Array()
-  wrapper = '.form-group'
-  counter = 0
 
   $(this).on 'click', 'form .add_fields', (e) ->
     e.preventDefault()
@@ -37,7 +35,7 @@ $(".ldap_users.edit").ready ->
 
     #Inserts a html drop down menu with avaiable attributes that the server gave back
     form_field = "<div class = 'form-group'>"
-    form_field += '<select name="new_trigger[' + parseInt(counter) + ']" class="col-sm-2 control-label" id="attribute-select">'
+    form_field += '<select name="new_trigger" class="col-sm-2 control-label" id="attribute-select">'
     form_field += '<option selected disabled>-Select Attribute-</option>'
     jQuery.each data, ->
       form_field +=  '<option value="' + this['keyattribute'] + '">' + this['keyattribute'] + '</option>';

@@ -1,0 +1,27 @@
+<div ng-controller="FormCtrl">
+  <% f.object.attributes.each do |key, value| %>
+      <div class = 'form-group'>
+        <%= f.label key, class: 'col-sm-2 control-label' %>
+        <div class="col-sm-10">
+          <% to_array_helper(value).each do |element| %>
+              <%= text_field "user_data[#{key}]", element, value: element, class: 'form-control' %> <br/>
+          <% end %>
+        </div>
+      </div>
+  <% end %>
+
+  <div ng-repeat = 'x in fieldList'>
+    <div class = 'form-group'>
+      <%= f.label "{{x.keyattribute}}", class: 'col-sm-2 control-label' %>
+      <div class="col-sm-10">
+        <%= text_field "user_data[new]", "{{x.keyattribute}}", class: 'form-control' %> <br/>
+      </div>
+    </div>
+  </div>
+
+  <select ng-model="selectedField" ng-options="option.keyattribute for option in availableList track by option.keyattribute">
+    <option value=''>- Please Choose -</option>
+  </select>
+  <a href="#" ng-click='addField()'; on-click="return false;">Add Attribute</a>
+
+</div>

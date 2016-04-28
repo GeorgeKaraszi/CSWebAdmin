@@ -14,12 +14,14 @@ queryInsert = [
     {
         :attribute_type_id => group_id,
         :keyattribute => 'ObjectClass',
-        :field_type => 'text_box'
+        :field_type => 'text_box',
+        :required => true
     },
     {
         :attribute_type_id => group_id,
         :keyattribute => 'gidNumber',
-        :field_type => 'text_box'
+        :field_type => 'text_box',
+        :required => true
     },
     {
         :attribute_type_id => group_id,
@@ -40,27 +42,32 @@ queryInsert = [
     {
         :attribute_type_id => user_id,
         :keyattribute => 'ObjectClass',
-        :field_type => 'text_box'
+        :field_type => 'text_box',
+        :required => true
     },
     {
         :attribute_type_id => user_id,
         :keyattribute => 'gidNumber',
-        :field_type => 'text_box'
+        :field_type => 'text_box',
+        :required => true
     },
     {
         :attribute_type_id => user_id,
         :keyattribute => 'uidNumber',
-        :field_type => 'text_box'
+        :field_type => 'text_box',
+        :required => true
     },
     {
         :attribute_type_id => user_id,
         :keyattribute => 'uid',
-        :field_type => 'text_box'
+        :field_type => 'text_box',
+        :required => true
     },
     {
         :attribute_type_id => user_id,
         :keyattribute => 'cn',
-        :field_type => 'text_box'
+        :field_type => 'text_box',
+        :required => true
     },
     {
         :attribute_type_id => user_id,

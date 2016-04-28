@@ -14,11 +14,12 @@
 ActiveRecord::Schema.define(version: 20160423182253) do
 
   create_table "attribute_fields", force: :cascade do |t|
-    t.string   "keyattribute",      limit: 255, null: false
-    t.string   "field_type",        limit: 255, null: false
+    t.string   "keyattribute",      limit: 255,                 null: false
+    t.string   "field_type",        limit: 255,                 null: false
+    t.boolean  "required",                      default: false
     t.integer  "attribute_type_id", limit: 4
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
   end
 
   add_index "attribute_fields", ["attribute_type_id"], name: "index_attribute_fields_on_attribute_type_id", using: :btree

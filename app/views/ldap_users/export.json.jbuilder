@@ -1,1 +1,1 @@
-json.extract! @ldap_user
+#json.extract! @ldap_user

@@ -1,0 +1,24 @@
+<div ng-repeat = 'x in fieldList'>
+  <div class = 'form-group'>
+    <span ng-click="removeField($index)" class="btn btn-danger btn-sm active">Remove</span>
+    <%= f.label "{{x.keyattribute}}", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-6">
+      <%= text_field "user_data[new]", "{{x.keyattribute}}", class: 'form-control' %>
+      <br/>
+    </div>
+  </div>
+</div>
+
+
+<div class = 'form-group'>
+  <div class="col-sm-2 control-label">
+  <a href="#" ng-click='addField()' class="btn btn-success btn-sm active">Add Attribute</a>
+  </div>
+  <div class="col-sm-3">
+    <select class = 'form-control '
+            ng-model="selectedField"
+            ng-options="option.keyattribute for option in availableList track by option.keyattribute">
+      <option value=''>- Please Choose -</option>
+    </select>
+  </div>
+</div>

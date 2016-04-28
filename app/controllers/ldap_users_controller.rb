@@ -1,5 +1,5 @@
 class LdapUsersController < ApplicationController
-  before_action :set_ldap_user, only: [:show, :edit, :export, :update, :destroy]
+  before_action :set_ldap_user, only: [:show, :edit, :update, :destroy]
   # GET /ldap_users
   # GET /ldap_users.json
   def index
@@ -62,8 +62,14 @@ class LdapUsersController < ApplicationController
   end
 
   def export
+    @ldap_user = LdapUser.find(params[:id]) if params.has_key?('id')
+
     respond_to do |format|
-      format.json { render json: @ldap_user.available_attributes('People') }
+      if @ldap_user
+        format.json { render json: @ldap_user.available_attributes('People') }
+      else
+        format.json { render json: LdapUser.available_attributes('People')}
+      end
     end
   end
 

@@ -12,9 +12,9 @@
   <% end %>
 
     <%= render 'angular_fields', f: f %>
-    <!--%= render 'user_fields', f: f %>
+    <!--%= render 'user_fields', f: f %-->
 
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit 'Save User', class: 'btn btn-primary active' %>
   </div>
 <% end %>

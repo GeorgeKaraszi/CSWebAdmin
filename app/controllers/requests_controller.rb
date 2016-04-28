@@ -8,6 +8,14 @@ class RequestsController < ApplicationController
     end
   end
 
+  def exportlist
+    @request = Request.request_by(request_params)
+
+    respond_to do |format|
+      format.json {render json: @request}
+    end
+  end
+
   def export
     @request = Request.request_by(request_params)
 

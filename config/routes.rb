@@ -12,10 +12,12 @@ Rails.application.routes.draw do
 
     resources :ldap_users do
       member do
-        get 'export', :format => 'json'
+        get '/db/export' => 'ldap_users#export_db', :format => 'json'
+        get '/ldap/export' => 'ldap_users#export_ldap', :format => 'json'
       end
       collection do
-        get 'export', :format => 'json'
+        get '/db/export' => 'ldap_users#export_db', :format => 'json'
+        get '/ldap/export' => 'ldap_users#export_ldap', :format => 'json'
       end
     end
 

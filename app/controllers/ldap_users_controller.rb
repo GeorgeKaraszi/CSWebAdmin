@@ -61,7 +61,7 @@ class LdapUsersController < ApplicationController
     end
   end
 
-  def export
+  def export_db
     @ldap_user = LdapUser.find(params[:id]) if params.has_key?('id')
 
     respond_to do |format|

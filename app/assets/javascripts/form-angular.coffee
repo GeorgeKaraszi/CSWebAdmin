@@ -2,6 +2,7 @@
 
 @app.controller 'FormCtrl', ($scope, $http) ->
 
+  $scope.presetFieldList = []
   $scope.fieldList = []
 
   #
@@ -16,12 +17,18 @@
   ###################################################################################
   $scope.FindMatchingHash = (hashArray, key, value, exception, deleteMatch = false)->
     returnValue = []
+
     angular.forEach(hashArray, (item)->
       if(item[key] && item[key] == value && item['keyattribute'] != exception)
         returnValue.push(item)
-        hashArray.splice(hashArray.indexOf(item), 1) unless deleteMatch == false
     )
 
+    if deleteMatch == true
+      angular.forEach(returnValue, (item)->
+        hashArray.splice(hashArray.indexOf(item), 1)
+      )
+
+    console.log('Return: ' + returnValue)
     return returnValue
 
 
@@ -44,7 +51,7 @@
   #
   # Get a list of attributes that have not yet been defined. (AJAX Request)
   ###################################################################################
-  $http.get('./export').success((data) ->
+  $http.get('./db/export').success((data) ->
     console.log(data)
     $scope.fieldList = $scope.FindMatchingHash(data, 'required', true, 'ObjectClass', true)
     $scope.availableList = data

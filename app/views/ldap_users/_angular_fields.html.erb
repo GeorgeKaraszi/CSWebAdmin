@@ -1,7 +1,7 @@
-<div ng-controller="FormCtrl" class = "col-md-offset-2">
+<div ng-controller="FormCtrl" class = "col-md-offset-1">
   <% f.object.attributes.each do |key, value| %>
       <div class = 'form-group'>
-        <%= f.label key, class: 'col-sm-2 control-label' %>
+        <%= f.label key, class: 'col-sm-3 control-label' %>
         <div class="col-sm-6">
           <% to_array_helper(value).each do |element| %>
               <%= text_field "user_data[#{key}]", element, value: element, class: 'form-control' %> <br/>

@@ -22,8 +22,8 @@ ldap_mapping dn_attribute: 'uid',
   # Returns all the available attributes a user can have
   ###################################################################################
   def self.available_attributes(att_name)
-    query = select_fields(att_name)
-    query.select(:keyattribute, :field_type, :required)
+    query = query_fields(att_name)
+    select_fields(query)
   end
 
 
@@ -32,11 +32,11 @@ ldap_mapping dn_attribute: 'uid',
   ###################################################################################
   def available_attributes(att_name)
     attribute_list = current_attributes
-    query = LdapUser.select_fields(att_name)
+    query = LdapUser.query_fields(att_name)
     if attribute_list.blank?
-      query.select(:keyattribute, :field_type, :required)
+      LdapUser.select_fields(query)
     else
-      query.select(:keyattribute, :field_type, :required).where.not(:keyattribute => attribute_list)
+      LdapUser.select_fields(query).where.not('attribute_names.keyattribute' => attribute_list)
     end
 
   end
@@ -80,8 +80,17 @@ ldap_mapping dn_attribute: 'uid',
   # Communicants with the database to select all possible attributes for a given OU
   # and their field types
   ###################################################################################
-  def self.select_fields(type_name)
-    AttributeField.joins(:attribute_type).where("attribute_types.name = '#{type_name}' ")
+  def self.query_fields(type_name)
+    AttributeField.joins(:attribute_type, :attribute_name).where("attribute_types.name = '#{type_name}' ")
   end
+
+  #
+  # Standard definition for what attributes we want to know about
+  ###################################################################################
+  def self.select_fields(query)
+    query.select('attribute_names.keyattribute, attribute_names.description, ' +
+                     'attribute_fields.field_type, attribute_fields.required')
+  end
+
 
 end

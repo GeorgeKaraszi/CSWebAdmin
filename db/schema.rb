@@ -11,18 +11,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160423182253) do
+ActiveRecord::Schema.define(version: 20160428183714) do
 
   create_table "attribute_fields", force: :cascade do |t|
-    t.string   "keyattribute",      limit: 255,                 null: false
     t.string   "field_type",        limit: 255,                 null: false
     t.boolean  "required",                      default: false
     t.integer  "attribute_type_id", limit: 4
+    t.integer  "attribute_name_id", limit: 4
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
   end
 
+  add_index "attribute_fields", ["attribute_name_id"], name: "index_attribute_fields_on_attribute_name_id", using: :btree
   add_index "attribute_fields", ["attribute_type_id"], name: "index_attribute_fields_on_attribute_type_id", using: :btree
+
+  create_table "attribute_names", force: :cascade do |t|
+    t.string   "keyattribute", limit: 255,                          null: false
+    t.string   "description",  limit: 255, default: "keyattribute"
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
+  end
 
   create_table "attribute_types", force: :cascade do |t|
     t.string   "name",       limit: 255, null: false

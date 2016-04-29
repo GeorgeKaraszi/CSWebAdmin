@@ -2,13 +2,33 @@ class LdapUser < ActiveLdap::Base
 ldap_mapping dn_attribute: 'uid',
              prefix: 'ou=People'
 
-
-
+  #
+  # Output:
+  #    [{description:**, field_type:**, keyattribute:**, values:[**,**]}, ...]
   #
   # Returns a list of attributes the user has already defined
   ###################################################################################
   def current_attributes
-    self.attributes.keys.select {|k| k if k != 'objectClass'}
+    reqHash = Array.new
+    query = LdapUser.query_fields('People')
+    values = []
+
+    self.attributes.each do |key,value|
+      queryRes = LdapUser.select_fields_where(query, 'attribute_names.keyattribute' => "#{key}").first
+
+      unless queryRes == nil
+        hashResults = {
+            :description => queryRes.description,
+            :field_type => queryRes.field_type,
+            :keyattribute => key,
+            :values => (value.kind_of?(Array) ? value : Array(value))
+        }
+
+          reqHash.push(hashResults)
+      end
+    end
+
+    reqHash
   end
 
   #
@@ -19,7 +39,7 @@ ldap_mapping dn_attribute: 'uid',
   end
 
   #
-  # Returns all the available attributes a user can have
+  # Returns all the available attributes a new user can have
   ###################################################################################
   def self.available_attributes(att_name)
     query = query_fields(att_name)
@@ -31,7 +51,7 @@ ldap_mapping dn_attribute: 'uid',
   # Returns all the available attributes that THIS user can have
   ###################################################################################
   def available_attributes(att_name)
-    attribute_list = current_attributes
+    attribute_list = self.attributes.keys.select {|k| k if k != 'objectClass'}
     query = LdapUser.query_fields(att_name)
     if attribute_list.blank?
       LdapUser.select_fields(query)
@@ -41,12 +61,14 @@ ldap_mapping dn_attribute: 'uid',
 
   end
 
+
+
   #
   # Processes all parameters that have been submitted and checks to see if any
   # additions or changes have been made to the LDAP record
   ###################################################################################
   def update_ldap(hash_params)
-    ret = true
+
     hash_params.each do |key, value|
       case key
         when 'new'
@@ -90,6 +112,11 @@ ldap_mapping dn_attribute: 'uid',
   def self.select_fields(query)
     query.select('attribute_names.keyattribute, attribute_names.description, ' +
                      'attribute_fields.field_type, attribute_fields.required')
+  end
+
+  def self.select_fields_where(query, where_clause)
+    query.select('attribute_names.keyattribute, attribute_names.description, ' +
+                   'attribute_fields.field_type, attribute_fields.required').where(where_clause)
   end
 
 

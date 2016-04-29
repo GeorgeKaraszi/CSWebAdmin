@@ -1,14 +1,19 @@
 <div ng-controller="FormCtrl" class = "col-md-offset-1">
-  <% f.object.attributes.each do |key, value| %>
-      <div class = 'form-group'>
-        <%= f.label key, class: 'col-sm-3 control-label' %>
-        <div class="col-sm-6">
-          <% to_array_helper(value).each do |element| %>
-              <%= text_field "user_data[#{key}]", element, value: element, class: 'form-control' %> <br/>
-          <% end %>
-        </div>
-      </div>
-  <% end %>
+
+  <div ng-repeat = 'key in currentAttributes'>
+
+        <div class = 'form-group' ng-repeat = 'element in key.values' ng-show= "currentAttributesVisible[key.keyattribute][$index]" >
+
+          <%= f.label "{{key.description}}", class: 'col-sm-3 control-label' %>
+            <div class="col-sm-5">
+              <%= text_field 'user_data[{{key.keyattribute}}]', '{{element}}', value: '{{element}}', class: 'form-control' %>
+            </div>
+            <div class="col-sm-3">
+              <span ng-click="removePresetField(key.keyattribute, $index)" class="btn btn-danger btn-sm active">Remove</span>
+            </div>
+
+        </div> <br/>
+  </div>
 
   <%= render 'field_fields', f: f %>
 

@@ -2,8 +2,10 @@
 
 @app.controller 'FormCtrl', ($scope, $http) ->
 
-  $scope.presetFieldList = []
+  $scope.currentAttributes = []
+  $scope.currentAttributesVisible= {}
   $scope.fieldList = []
+
 
   #
   # Test value to see if its vaild
@@ -28,7 +30,6 @@
         hashArray.splice(hashArray.indexOf(item), 1)
       )
 
-    console.log('Return: ' + returnValue)
     return returnValue
 
 
@@ -52,7 +53,6 @@
   # Get a list of attributes that have not yet been defined. (AJAX Request)
   ###################################################################################
   $http.get('./db/export').success((data) ->
-    console.log(data)
     $scope.fieldList = $scope.FindMatchingHash(data, 'required', true, 'ObjectClass', true)
     $scope.availableList = data
   ).error((data,status) ->
@@ -60,9 +60,41 @@
   )
 
   #
+  # Get a list of attributes that HAVE been defined with their values. (AJAX Request)
+  ###################################################################################
+  $http.get('./ldap/export').success((data) ->
+    unless angular.isUndefinedOrNull(data)
+      $scope.currentAttributes = data
+      angular.forEach(data, (item)->
+        $scope.currentAttributesVisible[item['keyattribute']] = []
+        angular.forEach(item['values'], (element)->
+          $scope.currentAttributesVisible[item['keyattribute']].push(true)
+        )
+      )
+
+  ).error((data,status) ->
+    console.log('error ' + status)
+  )
+
+
+  #
+  # Action: Click event
+  # Removes an attribute that is in the LDAP system already. Then adds the
+  # attribute to the avaiable attribute list
+  ###################################################################################
+  $scope.removePresetField = (key, index)->
+    console.log('key=' + key + ' index = ' + index)
+    $scope.currentAttributesVisible[key][index] = false
+    angular.forEach($scope.currentAttributes, (item)->
+      if(item['keyattribute'] == key)
+        item.values[index] = ''
+        $scope.availableList.push(item)
+    )
+
+
+  #
   # Action: Click event
   # Take the option from the select menu, then add it to the avabilie field list
-  #
   ###################################################################################
   $scope.addField = ->
     return if angular.isUndefinedOrNull($scope.selectedField)

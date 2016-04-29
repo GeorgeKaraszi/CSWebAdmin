@@ -73,6 +73,18 @@ class LdapUsersController < ApplicationController
     end
   end
 
+  def export_ldap
+    @ldap_user = LdapUser.find(params[:id]) if params.has_key?('id')
+
+    respond_to do |format|
+      if @ldap_user
+        format.json { render json: @ldap_user.current_attributes }
+      else
+        format.json { render json: nil }
+      end
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_ldap_user

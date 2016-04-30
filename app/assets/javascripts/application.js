@@ -13,5 +13,4 @@
 //= require jquery
 //= require jquery_ujs
 //= require angular
-//= jquery-readyselector
 //= require_tree .

@@ -38,7 +38,7 @@ class RequestsController < ApplicationController
 
   def set_group
     @ldap_group = LdapGroup.find(params[:id]) if params.has_key?('id')
-    @ldap_group = LdapGroup.new unless @ldap_user
+    @ldap_group = LdapGroup.new unless @ldap_group
   end
 
   def request_params

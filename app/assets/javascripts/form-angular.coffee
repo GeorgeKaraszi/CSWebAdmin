@@ -1,9 +1,8 @@
 @app = angular.module('ldapManager', [])
 
 @app.controller 'FormCtrl', ($scope, $http) ->
-
   $scope.currentAttributes = []
-  $scope.currentAttributesVisible= {}
+  $scope.currentAttributesVisible = {}
   $scope.fieldList = []
 
 
@@ -52,28 +51,23 @@
   #
   # Get a list of attributes that have not yet been defined. (AJAX Request)
   ###################################################################################
-  $http.get('./db/export').success((data) ->
-    $scope.fieldList = $scope.FindMatchingHash(data, 'required', true, 'ObjectClass', true)
-    $scope.availableList = data
-  ).error((data,status) ->
-    console.log('error')
-  )
+  $http.get('./ldap/request').success((data) ->
 
-  #
-  # Get a list of attributes that HAVE been defined with their values. (AJAX Request)
-  ###################################################################################
-  $http.get('./ldap/export').success((data) ->
-    unless angular.isUndefinedOrNull(data)
-      $scope.currentAttributes = data
-      angular.forEach(data, (item)->
-        $scope.currentAttributesVisible[item['keyattribute']] = []
-        angular.forEach(item['values'], (element)->
-          $scope.currentAttributesVisible[item['keyattribute']].push(true)
-        )
+    currentAttributes   = data["current"]
+    availableAttributes = data["available"]
+
+    $scope.currentAttributes = currentAttributes
+    angular.forEach(currentAttributes, (item)->
+      $scope.currentAttributesVisible[item['keyattribute']] = []
+      angular.forEach(item['values'], (element)->
+        $scope.currentAttributesVisible[item['keyattribute']].push(true)
       )
+    )
 
-  ).error((data,status) ->
-    console.log('error ' + status)
+    $scope.fieldList = $scope.FindMatchingHash(availableAttributes, 'required', true, 'ObjectClass', true)
+    $scope.availableList = availableAttributes
+  ).error((data, status) ->
+    console.log('error')
   )
 
 

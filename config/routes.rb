@@ -12,17 +12,20 @@ Rails.application.routes.draw do
 
     resources :ldap_users do
       member do
-        get '/db/export' => 'ldap_users#export_db', :format => 'json'
-        get '/ldap/export' => 'ldap_users#export_ldap', :format => 'json'
+        get '/ldap/request' => 'requests#ldap_user', :format => 'json'
       end
       collection do
-        get '/db/export' => 'ldap_users#export_db', :format => 'json'
-        get '/ldap/export' => 'ldap_users#export_ldap', :format => 'json'
+        get '/ldap/request' => 'requests#ldap_user', :format => 'json'
       end
     end
-
-    resources :ldap_groups
-    #match '/request/:type:name:excludes' => 'request#export', via: :get
+    resources :ldap_groups do
+      member do
+        get '/ldap/request' => 'requests#ldap_group', :format => 'json'
+      end
+      collection do
+        get '/ldap/request' => 'requests#ldap_group', :format => 'json'
+      end
+    end
 
   end
   root :to => redirect('login')

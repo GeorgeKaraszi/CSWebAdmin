@@ -96,7 +96,8 @@ queryInsert_group = [
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('cn').id,
-        :field_type => 'text_box'
+        :field_type => 'text_box',
+        :required => true
     }
 ]
 

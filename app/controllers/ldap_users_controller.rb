@@ -68,31 +68,28 @@ class LdapUsersController < ApplicationController
       if @ldap_user
         format.json { render json: @ldap_user.available_attributes('People') }
       else
-        format.json { render json: LdapUser.available_attributes('People')}
+        format.json { render json: LdapUser.available_attributes('People') }
       end
     end
   end
 
   def export_ldap
     @ldap_user = LdapUser.find(params[:id]) if params.has_key?('id')
+    @ldap_user = LdapUser.new unless @ldap_user
 
     respond_to do |format|
-      if @ldap_user
         format.json { render json: @ldap_user.current_attributes }
-      else
-        format.json { render json: nil }
-      end
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_ldap_user
-       @ldap_user = LdapUser.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_ldap_user
+    @ldap_user = LdapUser.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def ldap_user_params
-      params.require('user_data')
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def ldap_user_params
+    params.require('user_data')
+  end
 end

@@ -1,6 +1,7 @@
 class CreateAttributeNames < ActiveRecord::Migration
   def change
     create_table :attribute_names do |t|
+      t.string :title
       t.string :keyattribute, null: false, :unique => true
       t.string :description, default: :keyattribute
 

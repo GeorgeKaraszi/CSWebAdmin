@@ -13,9 +13,11 @@ Rails.application.routes.draw do
     resources :ldap_users do
       member do
         get '/ldap/request' => 'requests#ldap_user', :format => 'json'
+        get '/ldap/test' => 'requests#ldap_test', :format => 'json'
       end
       collection do
         get '/ldap/request' => 'requests#ldap_user', :format => 'json'
+        get '/ldap/test' => 'requests#ldap_test', :format => 'json'
       end
     end
     resources :ldap_groups do

@@ -1,10 +1,21 @@
 <div ng-controller="FormTest">
 
+  <div class="col-md-12">
+      <pre>userData: {{userData | pretty}}</pre>
+    <pre>inactiveFields: {{inactiveFields | pretty}}</pre>
+    <pre>documentModel: {{documentModel}}</pre>
+  </div>
+
 <dynamic-form ng-model="userData"
-              field-class = 'col-sm-5'
+              active-model="activeFields"
+              inactive-model="inactiveFields"
+              document-model="documentModel"
               label-class='col-sm-3 control-label'
               rm-container-class = 'col-sm-3'
               remove-class = 'btn btn-danger btn-sm active'>
 </dynamic-form>
+
+
+  <span ng-click = "appendData()" class = "btn btn-danger btn-sm active">TestAppend</span>
 
 </div>

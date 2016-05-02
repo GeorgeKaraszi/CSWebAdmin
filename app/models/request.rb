@@ -27,6 +27,27 @@ class Request
     attribute_list             = ldap_entry.attributes.keys.select { |k| k if k != 'objectClass' }
     query_available_attributes = test_select_fields(query).where.not('attribute_names.keyattribute' => attribute_list)
 
+
+    ldap_entry.attributes.each do |key, value|
+      query_results = test_select_fields_where(query, 'attribute_names.keyattribute' => "#{key}").first
+      values = (value.kind_of?(Array) ? value : Array(value))
+
+      values.each do |element|
+        unless query_results == nil
+          hash_input = {
+              :title       => query_results.title,
+              :description => query_results.description,
+              :type        => query_results.field_type,
+              :key         => query_results.keyattribute,
+              #enum => entry.enum   -- Add this once value restrictions are in place (select and radio buttons)
+              :val         => element
+          }
+
+          request_hash.push(hash_input)
+        end
+      end
+    end
+
     query_available_attributes.each do |entry|
       hash_input = {
           :title       => entry.title,
@@ -38,27 +59,6 @@ class Request
       }
 
       request_hash.push(hash_input)
-    end
-
-    ldap_entry.attributes.each do |key, value|
-      query_results = test_select_fields_where(query, 'attribute_names.keyattribute' => "#{key}").first
-      values = (value.kind_of?(Array) ? value : Array(value))
-
-      values.each do |element|
-        unless query_results == nil
-          hash_input = {
-              :title       => query_results.title,
-              :description => query_results.description,
-              :field_type  => query_results.field_type,
-              :key         => query_results.keyattribute,
-              #enum => entry.enum   -- Add this once value restrictions are in place (select and radio buttons)
-              :val         => element
-          }
-
-          request_hash.push(hash_input)
-        end
-      end
-
     end
 
     request_hash

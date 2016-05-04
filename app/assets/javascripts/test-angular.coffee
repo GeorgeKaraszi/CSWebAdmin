@@ -1,9 +1,6 @@
 @app = angular.module('ldapManager', [])
 
 @app.directive 'dynamicForm', ($q, $http, $document, $parse, $templateCache, $compile, $timeout, $filter) ->
-  active_fields = {}
-  inactive_fields = {}
-
   field_support =
     'text': {
       element: 'input',
@@ -95,12 +92,14 @@
     restrict: 'E',
     link: ($scope, element, attrs) ->
 
+      $scope.active_fields = {}
+      $scope.inactive_fields = {}
+      $scope.selectedField = {}
+
       if(angular.isDefined(attrs.ngModel) && angular.isDefined(attrs.activeModel) &&
          angular.isDefined(attrs.inactiveModel) && angular.isDefined(attrs.documentModel))
+
         model = $parse(attrs.ngModel)($scope)
-        activeModel = $parse(attrs.activeModel)($scope)
-        inactiveModel = $parse(attrs.inactiveModel)($scope)
-        documentModel = $parse(attrs.documentModel)($scope)
 
 
         ($http.get('./ldap/test', {cache: $templateCache}).then (results)->
@@ -162,6 +161,44 @@
             newRemoveParent.append(newRemoveTag)
             return newRemoveParent;
 
+          makeAddTag = ()->
+            newAddParent = angular.element($document[0].createElement('div'))
+            newAddParent.addClass('col-sm-3 control-label')
+
+            newAddTag = angular.element($document[0].createElement('span'))
+            newAddTag.addClass('btn btn-success btn-sm active')
+            newAddTag.attr('ng-click', 'addField()' )
+            newAddTag.append('Add Field')
+            newAddParent.append(newAddTag)
+
+            return newAddParent
+
+          makeSelectField = (options, something)->
+            newSelectParent = angular.element($document[0].createElement('div'))
+            newSelectParent.addClass('col-sm-3')
+
+            newSelect = angular.element($document[0].createElement('select'))
+            newSelect.addClass('form-control')
+            newSelect.attr('ng-model', 'selectedField')
+            newSelect.attr('ng-options', 'option.title for option in inactive_fields track by option.key')
+            newSelect.append("<option value=''> Please Choose </option>")
+            newSelectParent.append(newSelect)
+
+            return newSelectParent
+
+          #
+          # Rebuilds the list that displays avaible fields
+          #################################################################################
+          makeInactiveList = (inactiveEntries)->
+            newSelectContainer = angular.element($document[0].createElement('div'))
+            newSelectContainer.addClass('form-group')
+
+            newSelectContainer.append(makeAddTag())
+            newSelectContainer.append(makeSelectField(inactiveEntries, false))
+
+            return newSelectContainer;
+
+
           #
           # Creates the form's ID tag that will be returned to the server for evlauation
           # Output Examples:
@@ -173,6 +210,7 @@
               return (scope_model + "['" + fieldId + "']" + "['" + val + "']")
             else
               return (scope_model + "['new']['" + fieldId + "']" )
+
 
           #
           # Builds each field, depending on their speicification.
@@ -193,7 +231,7 @@
 
               if(entry.type == 'text' || entry.type == 'password' || entry.type == 'number')
                 if angular.isDefined(entry.val)
-                  newElement.attr('value', entry.val)
+                  #newElement.attr('value', entry.val)
                   setProperty(model, entry.key, entry.val, true)
                 else
                   setProperty(model, entry.key, undefined, false)
@@ -217,19 +255,20 @@
           #################################################################################
           showFields = (entry, id, htmlElement)->
             entry.htmlElement = htmlElement
-            active_fields[id] = entry
+
+            $scope.active_fields[id] = entry
 
           #
           # Adds an entrie to the list of non-display elements
           #################################################################################
           hideFields = (entry, id, htmlElement)->
             entry.htmlElement = htmlElement
-            inactive_fields[id] = entry
+            $scope.inactive_fields[id] = entry
 
           #
           # Rebuilds the form based on the current list of entries
           #################################################################################
-          rebuildForm = (activeEntries)->
+          rebuildForm = (activeEntries, inactiveEntries)->
             element.empty()               #Clear contents of the form
 
             newBody = angular.element($document[0].createElement('div'))
@@ -238,16 +277,13 @@
               newBody.append(entry.htmlElement)
             )
 
+            newBody.append(makeInactiveList(inactiveEntries))
+
             $compile(newBody)($scope)    #Compile new HTML build
             element.append(newBody)      #Append to the form body
 
             return true;
 
-          #
-          # Rebuilds the list that displays avaible fields
-          #################################################################################
-          rebuildInactiveList = (inactiveEntries)->
-            return false;
 
           #
           # Click event
@@ -256,16 +292,31 @@
           #################################################################################
           $scope.removeField = (index)->
 
-            if angular.isDefined(active_fields[index]) && !angular.isDefined(inactive_fields[index])
-              inactive_fields[index] = active_fields[index]
-              inactive_fields[index].val = ''
-              model[active_fields[index].key][active_fields[index].val] = ''
+            if (angular.isDefined($scope.active_fields[index]) &&
+                !angular.isDefined($scope.inactive_fields[index]))
 
-              delete active_fields[index]
+              $scope.inactive_fields[index] = $scope.active_fields[index]
 
-              rebuildForm(active_fields)
-              rebuildInactiveList(inactive_fields)
+              model[$scope.active_fields[index].key][$scope.active_fields[index].val] = ''
+              delete $scope.active_fields[index]
 
+              console.log(model)
+              rebuildForm($scope.active_fields)
+
+
+          #
+          # Click event
+          #
+          # Adds a field from the inactive list to the display list
+          #################################################################################
+          $scope.addField = ()->
+            index = $scope.selectedField.model
+            if (!angular.isDefined($scope.active_fields[index]) &&
+                 angular.isDefined($scope.inactive_fields[index]))
+              $scope.active_fields[index] = $scope.inactive_fields[index]
+              delete $scope.inactive_fields[index]
+
+              rebuildForm($scope.active_fields)
 
           #
           # (Start) ->
@@ -281,7 +332,7 @@
             else
               hideFields(template[i],i,htmlElement)
 
-          rebuildForm(active_fields)
+          rebuildForm($scope.active_fields, $scope.inactive_fields)
   }
 
 @app.controller 'FormTest', ($scope, $http, $compile) ->

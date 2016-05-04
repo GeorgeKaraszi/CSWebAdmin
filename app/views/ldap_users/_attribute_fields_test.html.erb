@@ -1,11 +1,5 @@
 <div ng-controller="FormTest">
 
-  <div class="col-md-12">
-      <pre>userData: {{userData | pretty}}</pre>
-    <pre>inactiveFields: {{inactiveFields | pretty}}</pre>
-    <pre>documentModel: {{documentModel}}</pre>
-  </div>
-
 <dynamic-form ng-model="userData"
               active-model="activeFields"
               inactive-model="inactiveFields"
@@ -18,4 +12,10 @@
 
   <span ng-click = "appendData()" class = "btn btn-danger btn-sm active">TestAppend</span>
 
+
+  <div class="col-md-12">
+    <pre>userData: {{userData | pretty}}</pre>
+    <pre>inactiveFields: {{inactiveFields | pretty}}</pre>
+    <pre>documentModel: {{documentModel}}</pre>
+  </div>
 </div>

@@ -1,5 +1,5 @@
 class RequestsController < ApplicationController
-  before_action :set_user, only: [:ldap_user]
+  before_action :set_user, only: [:ldap_user, :ldap_test]
   before_action :set_group, only: [:ldap_group]
 
 
@@ -23,6 +23,17 @@ class RequestsController < ApplicationController
     respond_to do |format|
       if @ldap_group
         format.json { render json: Request.attribute_query(@ldap_group, 'Groups') }
+      else
+        format.json { render json: nil }
+      end
+    end
+  end
+
+
+  def ldap_test
+    respond_to do |format|
+      if @ldap_user
+        format.json { render json: Request.test_query(@ldap_user, 'People') }
       else
         format.json { render json: nil }
       end

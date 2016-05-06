@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20160428183714) do
   add_index "attribute_fields", ["attribute_type_id"], name: "index_attribute_fields_on_attribute_type_id", using: :btree
 
   create_table "attribute_names", force: :cascade do |t|
+    t.string   "title",        limit: 255
     t.string   "keyattribute", limit: 255,                          null: false
     t.string   "description",  limit: 255, default: "keyattribute"
     t.datetime "created_at",                                        null: false

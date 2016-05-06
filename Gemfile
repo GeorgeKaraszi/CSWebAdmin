@@ -42,6 +42,7 @@ gem 'devise', '~> 3.5', '>= 3.5.6'
 gem 'ldap-admin'
 gem 'activeldap', :require => 'active_ldap/railtie'
 gem 'angularjs-rails'
+gem 'angular-ui-bootstrap-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

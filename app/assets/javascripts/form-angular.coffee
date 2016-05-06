@@ -1,4 +1,4 @@
-@app = angular.module('ldapManager', [])
+@app = angular.module('', [])
 
 @app.controller 'FormCtrl', ($scope, $http) ->
   $scope.currentAttributes = []

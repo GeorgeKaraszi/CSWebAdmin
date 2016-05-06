@@ -285,6 +285,7 @@
             return true;
 
 
+
           #
           # Click event
           #
@@ -301,7 +302,7 @@
               delete $scope.active_fields[index]
 
               console.log(model)
-              rebuildForm($scope.active_fields)
+              rebuildForm($scope.active_fields, $scope.inactive_fields)
 
 
           #
@@ -316,7 +317,7 @@
               $scope.active_fields[index] = $scope.inactive_fields[index]
               delete $scope.inactive_fields[index]
 
-              rebuildForm($scope.active_fields)
+              rebuildForm($scope.active_fields, $scope.inactive_fields)
 
           #
           # (Start) ->
@@ -335,11 +336,32 @@
           rebuildForm($scope.active_fields, $scope.inactive_fields)
   }
 
-@app.controller 'FormTest', ($scope, $http, $compile) ->
-  $scope.activeFields = {}
-  $scope.inactiveFields = {}
+@app.controller 'FormTest', ['$scope', '$http', ($scope, $http) ->
   $scope.userData = {}
-  $scope.documentModel = {}
+
+  $scope.submitForm = ()->
+    console.log('We are here')
+    config = {header: 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'}
+    mydata = $.param({
+      user_data: $scope.userData
+    });
+
+    $http({
+      method: 'PATCH',
+      url: '.',
+      data: {userdata: angular.toJson($scope.userData, false)},
+      header: 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+    }).then(
+      (response)->
+        console.log('win!')
+        console.log(response)
+      ,
+      (response)->
+        console.log('LOSE!')
+        console.log(response)
+    )
+]
+
 
 @app.filter 'pretty', ->
   return (input) ->
@@ -349,4 +371,4 @@
     catch e
       temp = input
 
-    angular.toJson temp, true
+    angular.toJson temp, false

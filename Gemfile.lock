@@ -109,6 +109,7 @@ GEM
       mini_portile2 (~> 2.0.0.rc2)
     orm_adapter (0.5.0)
     rack (1.6.4)
+    rack-cors (0.4.0)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.6)
@@ -193,6 +194,7 @@ DEPENDENCIES
   jquery-rails
   ldap-admin
   mysql2 (>= 0.3.13, < 0.5)
+  rack-cors
   rails (= 4.2.6)
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)

@@ -93,7 +93,7 @@ puts query_insert_names
 
 AttributeName.create!(query_insert_names)
 
-queryInsert_group = [
+query_insert_group = [
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('ObjectClass').id,
         :field_type => 'text',
@@ -119,7 +119,7 @@ queryInsert_group = [
     }
 ]
 
-queryInsert_user= [
+query_insert_user= [
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('ObjectClass').id,
         :field_type => 'text',
@@ -168,8 +168,8 @@ queryInsert_user= [
     }
 ]
 
-puts queryInsert_group
-puts queryInsert_user
+puts query_insert_group
+puts query_insert_user
 
-AttributeType.create!(:name => 'Groups', :ou_type => 'Groups', :fields_attributes => queryInsert_group)
-AttributeType.create!(:name => 'People', :ou_type => 'People', :fields_attributes => queryInsert_user)
+AttributeType.create!(:name => 'Groups', :ou_type => 'Groups', :fields_attributes => query_insert_group)
+AttributeType.create!(:name => 'People', :ou_type => 'People', :fields_attributes => query_insert_user)

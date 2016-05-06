@@ -12,146 +12,164 @@ AttributeName.delete_all
 
 query_insert_names = [
     {
+        :title => 'Object Class',
         :keyattribute => 'ObjectClass',
-        :description => 'Object Class'
+        :description => 'Hierarchical LDAP Schema. This will determine what attributes are available to use.'
     },
     {
+        :title => 'First Name',
         :keyattribute => 'givenName',
         :description => 'First Name'
     },
     {
+        :title => 'Last Name',
         :keyattribute => 'sn',
         :description => 'Last Name'
     },
     {
+        :title => 'Display Name',
         :keyattribute => 'displayName',
-        :description => 'Display Name'
+        :description => 'Name that will be displayed on a UNIX system'
     },
     {
+        :title => 'Username',
         :keyattribute => 'uid',
-        :description => 'Username'
+        :description => 'Username that will be used to login with on UNIX type systems'
     },
     {
+        :title => 'Group ID',
         :keyattribute => 'gidNumber',
-        :description => 'Group ID(GID)'
+        :description => 'Default Group association. This will identify what group you belong to on a UNIX system'
     },
     {
+        :title => 'User ID',
         :keyattribute => 'uidNumber',
-        :description => 'User ID(UID)'
+        :description => 'This will identify what user you are on a UNIX system'
     },
     {
+        :title => 'Shell Path',
         :keyattribute => 'loginShell',
-        :description => 'System Shell Path'
+        :description => 'Path the system will use to locate a bash shell for the user to use'
     },
     {
+        :title => 'Home Dir.',
         :keyattribute => 'homeDirectory',
-        :description => 'Home Dir. Path'
+        :description => 'Directory the System will assign to the user upon logging in'
     },
     {
+        :title => 'Password',
         :keyattribute => 'userPassword',
-        :description => 'Password'
+        :description => 'Password that the system will use to authenticate with'
     },
     {
+        :title => 'Organizational Unit',
         :keyattribute => 'ou',
-        :description => 'Organization Unit'
+        :description => 'Classification to where this entry is located on the ldap system... EG OU=People OU=Lawyer'
     },
     {
+        :title => 'Member UID',
         :keyattribute => 'memberUid',
-        :description => 'Member uid'
+        :description => 'Will assign a user to the group based on their username'
     },
     {
+        :title => 'Unique Member(DN)',
         :keyattribute => 'uniqueMember',
-        :description => 'Unique Member (Full DN)'
+        :description => 'Will assign a user to the group with a complete identification of their full DN. ' +
+            'This is useful for authentication. This is NOT compatible with UNIX groups.'
     },
     {
+        :title => 'Common Name',
         :keyattribute => 'cn',
-        :description => 'Common Name(Global unique name)'
+        :description => 'This refers to the individual object'
     },
     {
+        :title => 'Gecos',
         :keyattribute => 'gecos',
-        :description => 'UNIX Account UID'
+        :description => 'Contains general information like: location, telephone, and other identifying information. ' +
+            'This is found in most UNIX /etc/passwd files.'
     },
 ]
+puts query_insert_names
 
 AttributeName.create!(query_insert_names)
 
-queryInsert_group = [
+query_insert_group = [
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('ObjectClass').id,
-        :field_type => 'text_box',
+        :field_type => 'text',
         :required => true
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('gidNumber').id,
-        :field_type => 'text_box',
+        :field_type => 'number',
         :required => true
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('memberUid').id,
-        :field_type => 'text_box'
+        :field_type => 'text'
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('uniqueMember').id,
-        :field_type => 'text_box'
+        :field_type => 'text'
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('cn').id,
-        :field_type => 'text_box',
+        :field_type => 'text',
         :required => true
     }
 ]
 
-queryInsert_user= [
+query_insert_user= [
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('ObjectClass').id,
-        :field_type => 'text_box',
+        :field_type => 'text',
         :required => true
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('gidNumber').id,
-        :field_type => 'text_box',
+        :field_type => 'number',
         :required => true
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('uidNumber').id,
-        :field_type => 'text_box',
+        :field_type => 'number',
         :required => true
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('uid').id,
-        :field_type => 'text_box',
+        :field_type => 'text',
         :required => true
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('cn').id,
-        :field_type => 'text_box',
+        :field_type => 'text',
         :required => true
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('givenName').id,
-        :field_type => 'text_box'
+        :field_type => 'text'
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('loginShell').id,
-        :field_type => 'text_box'
+        :field_type => 'text'
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('userPassword').id,
-        :field_type => 'text_box',
+        :field_type => 'password',
         :required => true
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('gecos').id,
-        :field_type => 'text_box'
+        :field_type => 'text'
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('homeDirectory').id,
-        :field_type => 'text_box'
+        :field_type => 'text'
     }
 ]
-AttributeType.create!(:name => 'Groups', :ou_type => 'Groups', :fields_attributes => queryInsert_group)
-AttributeType.create!(:name => 'People', :ou_type => 'People', :fields_attributes => queryInsert_user)
 
-# queryInsert.each do |att|
-#   AttributeField.create!(att)
-# end
+puts query_insert_group
+puts query_insert_user
+
+AttributeType.create!(:name => 'Groups', :ou_type => 'Groups', :fields_attributes => query_insert_group)
+AttributeType.create!(:name => 'People', :ou_type => 'People', :fields_attributes => query_insert_user)

@@ -1,4 +1,4 @@
-@app = angular.module('ldapManager', [])
+@app = angular.module('formbuilder', [])
 
 @app.directive 'dynamicForm', ($q, $http, $document, $parse, $templateCache, $compile, $timeout, $filter) ->
   field_support =
@@ -335,40 +335,3 @@
 
           rebuildForm($scope.active_fields, $scope.inactive_fields)
   }
-
-@app.controller 'FormTest', ['$scope', '$http', ($scope, $http) ->
-  $scope.userData = {}
-
-  $scope.submitForm = ()->
-    console.log('We are here')
-    config = {header: 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'}
-    mydata = $.param({
-      user_data: $scope.userData
-    });
-
-    $http({
-      method: 'PATCH',
-      url: '.',
-      data: {userdata: angular.toJson($scope.userData, false)},
-      header: 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-    }).then(
-      (response)->
-        console.log('win!')
-        console.log(response)
-      ,
-      (response)->
-        console.log('LOSE!')
-        console.log(response)
-    )
-]
-
-
-@app.filter 'pretty', ->
-  return (input) ->
-    temp = undefined
-    try
-      temp = angular.fromJson(input)
-    catch e
-      temp = input
-
-    angular.toJson temp, false

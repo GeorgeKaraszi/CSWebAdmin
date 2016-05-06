@@ -1,5 +1,6 @@
 class LdapUsersController < ApplicationController
   before_action :set_ldap_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_form_action, only: [:edit, :new]
   # GET /ldap_users
   # GET /ldap_users.json
   def index
@@ -42,7 +43,7 @@ class LdapUsersController < ApplicationController
   def update
     respond_to do |format|
       if @ldap_user.update_ldap(ldap_user_params)
-        format.html { redirect_to @ldap_user, notice: 'Ldap user was successfully updated.' }
+        format.html { render json: {:path => ldap_user_path(@ldap_user['dn'])}, notice: 'Ldap user was successfully updated.' }
         format.json { render :show, status: :ok, location: @ldap_user }
       else
         format.html { render :edit }
@@ -88,8 +89,12 @@ class LdapUsersController < ApplicationController
     @ldap_user = LdapUser.find(params[:id])
   end
 
+  def set_form_action
+    @action = params[:action]
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def ldap_user_params
-    params.require('user_data')
+    params.require('ldapEntry')
   end
 end

@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3 dashboard-navigation">
+      <h4>Index</h4>
+      <h2></h2>
+      <ul class="nav nav-pills nav-stacked">
+        <li><a ui-sref="ldap_users.show">show</a></li>
+        <li><a ui-sref="ldap_users.edit">edit</a></li>
+        <li><a ui-sref="ldap_users.new">new</a></li>
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <div class="dashboard-view-container">
+        <div class="dashboard-ui-view" ui-view>
+          {{showData}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

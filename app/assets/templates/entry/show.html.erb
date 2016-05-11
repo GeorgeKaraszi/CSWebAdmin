@@ -1,1 +1,16 @@
-{{showData}}
+<a ui-sref="/.edit({id: entryData.dn})">Edit</a>
+<a ui-sref="/">Back</a>
+<table class='table table-hover'>
+  <thead>
+  <th>Attribute</th>
+  <th>Value/s</th>
+  </thead>
+  <tbody>
+      <tr ng-repeat = '(key, value) in entryData.attributes'>
+        <td>{{key}}</td>
+        <td><ul class='list-unstyled'>
+          <li ng-repeat="element in ensureArray(value)">{{element}}</li>
+        </ul></td>
+      </tr>
+  </tbody>
+</table>

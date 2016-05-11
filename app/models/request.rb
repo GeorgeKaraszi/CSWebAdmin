@@ -13,23 +13,19 @@ class Request
   ###################################################################################
   def self.attribute_query(ldap_entry, ou)
 
-    return {
-        :current   => current_attributes(ldap_entry, ou),
-        :available => available_attributes(ldap_entry, ou)
-    }
+    # return {
+    #     :current   => current_attributes(ldap_entry, ou),
+    #     :available => available_attributes(ldap_entry, ou)
+    # }
 
-  end
-
-
-  def self.test_query(ldap_entry, ou)
     request_hash               = Array.new
     query                      = query_fields(ou)
     attribute_list             = ldap_entry.attributes.keys.select { |k| k if k != 'objectClass' }
-    query_available_attributes = test_select_fields(query).where.not('attribute_names.keyattribute' => attribute_list)
+    query_available_attributes = select_fields(query).where.not('attribute_names.keyattribute' => attribute_list)
 
 
     ldap_entry.attributes.each do |key, value|
-      query_results = test_select_fields_where(query, 'attribute_names.keyattribute' => "#{key}").first
+      query_results = select_fields_where(query, 'attribute_names.keyattribute' => "#{key}").first
       values = (value.kind_of?(Array) ? value : Array(value))
 
       values.each do |element|
@@ -122,22 +118,13 @@ class Request
   #
   # Standard definition for what attributes we want to know about
   ###################################################################################
-  def self.select_fields(query)
-    query.select('attribute_names.keyattribute, attribute_names.description, ' +
-                     'attribute_fields.field_type, attribute_fields.required')
-  end
 
   def self.select_fields_where(query, where_clause)
-    query.select('attribute_names.keyattribute, attribute_names.description, ' +
-                     'attribute_fields.field_type, attribute_fields.required').where(where_clause)
-  end
-
-  def self.test_select_fields_where(query, where_clause)
     query.select('attribute_names.title, attribute_names.keyattribute, attribute_names.description, ' +
                      'attribute_fields.field_type, attribute_fields.required').where(where_clause)
   end
 
-  def self.test_select_fields(query)
+  def self.select_fields(query)
     query.select('attribute_names.title, attribute_names.keyattribute, attribute_names.description, ' +
                      'attribute_fields.field_type, attribute_fields.required')
   end

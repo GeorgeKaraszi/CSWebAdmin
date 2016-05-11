@@ -3,10 +3,17 @@ class LdapUser < ActiveLdap::Base
                prefix:       'ou=People'
 
   #
-  # Returns a model used by rails form builder
+  # Returns a json hash model to the requesting api
   ###################################################################################
-  def to_model
-    self
+
+  def self.json_model(entries)
+    if entries.kind_of?(Array)
+      return entries.map do |hash|
+        {dn: "#{hash['dn']}", cn: hash.cn, attributes:hash.attributes}
+      end
+    else
+      return {dn:"#{entries['dn']}", cn: entries.cn, attributes:entries.attributes}
+    end
   end
 
   #

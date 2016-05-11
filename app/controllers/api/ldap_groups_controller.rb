@@ -1,16 +1,16 @@
-class LdapGroupsController < ApplicationController
+class Api::LdapGroupsController < ApplicationController
   before_action :set_ldap_group, only: [:show, :edit, :update, :destroy]
 
-  # GET /ldap_groups
+
   # GET /ldap_groups.json
   def index
-    @ldap_groups = LdapGroup.all
+    render json: LdapGroup.json_model(LdapGroup.all)
   end
 
-  # GET /ldap_groups/1
+
   # GET /ldap_groups/1.json
   def show
-    set_ldap_group
+    render json: LdapGroup.json_model(set_ldap_group)
   end
 
   # GET /ldap_groups/new
@@ -38,17 +38,12 @@ class LdapGroupsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /ldap_groups/1
   # PATCH/PUT /ldap_groups/1.json
   def update
-    respond_to do |format|
-      if @ldap_group.update_ldap(ldap_group_params)
-        format.html { redirect_to @ldap_group, notice: 'Ldap group was successfully updated.' }
-        format.json { render :show, status: :ok, location: @ldap_group }
-      else
-        format.html { render :edit, alert: @ldap_group.errors.full_message }
-        format.json { render json: @ldap_group.errors, status: :unprocessable_entity }
-      end
+    if @ldap_group.update_ldap(ldap_group_params)
+      render nothing: true
+    else
+      render json: @ldap_group.errors
     end
   end
 
@@ -70,6 +65,6 @@ class LdapGroupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ldap_group_params
-      params.require('group_data')
+      params.require('ldapData')
     end
 end

@@ -1,16 +1,16 @@
-class LdapUsersController < ApplicationController
+class Api::LdapUsersController < ApplicationController
   before_action :set_ldap_user, only: [:show, :edit, :update, :destroy]
-  before_action :set_form_action, only: [:edit, :new]
-  # GET /ldap_users
+
+
   # GET /ldap_users.json
   def index
-    @ldap_users = LdapUser.all
+    render json: LdapUser.json_model(LdapUser.all)
   end
 
   # GET /ldap_users/1
   # GET /ldap_users/1.json
   def show
-    @ldap_user = set_ldap_user
+    render json: LdapUser.json_model(set_ldap_user)
   end
 
   # GET /ldap_users/new
@@ -41,14 +41,10 @@ class LdapUsersController < ApplicationController
   # PATCH/PUT /ldap_users/1
   # PATCH/PUT /ldap_users/1.json
   def update
-    respond_to do |format|
-      if @ldap_user.update_ldap(ldap_user_params)
-        format.html { render json: {:path => ldap_user_path(@ldap_user['dn'])}, notice: 'Ldap user was successfully updated.' }
-        format.json { render :show, status: :ok, location: @ldap_user }
-      else
-        format.html { render :edit }
-        format.json { render alert: @ldap_user.errors.full_messages, status: :unprocessable_entity }
-      end
+    if @ldap_user.update_ldap(ldap_user_params)
+      render nothing: true
+    else
+      render json: @ldap_user.errors
     end
   end
 
@@ -62,39 +58,14 @@ class LdapUsersController < ApplicationController
     end
   end
 
-  def export_db
-    @ldap_user = LdapUser.find(params[:id]) if params.has_key?('id')
-
-    respond_to do |format|
-      if @ldap_user
-        format.json { render json: @ldap_user.available_attributes('People') }
-      else
-        format.json { render json: LdapUser.available_attributes('People') }
-      end
-    end
-  end
-
-  def export_ldap
-    @ldap_user = LdapUser.find(params[:id]) if params.has_key?('id')
-    @ldap_user = LdapUser.new unless @ldap_user
-
-    respond_to do |format|
-        format.json { render json: @ldap_user.current_attributes }
-    end
-  end
-
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_ldap_user
     @ldap_user = LdapUser.find(params[:id])
   end
 
-  def set_form_action
-    @action = params[:action]
-  end
-
   # Never trust parameters from the scary internet, only allow the white list through.
   def ldap_user_params
-    params.require('ldapEntry')
+    params.require('ldapData')
   end
 end

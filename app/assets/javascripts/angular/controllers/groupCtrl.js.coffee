@@ -1,10 +1,11 @@
 ldapManager = angular.module('ldapManager')
 
 ldapManager.controller 'GroupIndexCtrl', ['$scope', 'Group', ($scope, Group)->
-  @groupServices = new Group()
-  $scope.entryCN= 'Group Name'
-  $scope.entryIdName = 'GID'
-  $scope.entryList = @groupServices.all()
+  $scope.init = ()->
+    @groupServices = new Group()
+    $scope.entryCN= 'Group Name'
+    $scope.entryIdName = 'GID'
+    $scope.entryList = @groupServices.all()
   
   $scope.ensureEntryId = (entry)->
     return entry.attributes.gidNumber
@@ -16,7 +17,7 @@ ldapManager.controller 'GroupNewCtrl', ['$scope', 'Group', ($scope, Group)->
 ]
 
 ldapManager.controller 'GroupEditCtrl', ['$scope', '$stateParams','Group', ($scope, $stateParams, Group)->
-  $scope.requestUrl = '/api/ldap_groups/' + $stateParams.id + '/ldap/request.json'
+  $scope.requestUrl = '/api/request/group/' + $stateParams.id
   $scope.ldapForm = {}
 
   $scope.init = () ->
@@ -25,15 +26,15 @@ ldapManager.controller 'GroupEditCtrl', ['$scope', '$stateParams','Group', ($sco
 
 
   $scope.submit = ()->
-    console.log('submitting')
-    console.log(@groupServices)
     @groupServices.update($stateParams.id, $scope.ldapForm)
-    console.log('submitted')
+
 ]
 
-ldapManager.controller 'GroupShowCtrl', ['$scope', '$stateParams','Group', ($scope, $stateParams, Group)->
-  @groupServices = new Group($stateParams.id)
-  $scope.entryData = @groupServices.getGroup()
+ldapManager.controller 'GroupShowCtrl', ['$scope', '$state', '$stateParams', 'User', ($scope, $state, $stateParams, Group)->
+  $scope.init = ()->
+    @groupServices = new User($stateParams.id)
+    $scope.entryData = @groupServices.getGroup()
+    $scope.currentState = $state.current
 
   $scope.ensureArray = (value)->
     return value if angular.isArray(value)

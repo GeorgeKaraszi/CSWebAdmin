@@ -1,6 +1,7 @@
 class LdapUser < ActiveLdap::Base
-  ldap_mapping dn_attribute: 'uid',
-               prefix:       'ou=People'
+  ldap_mapping :dn_attribute => 'uid',
+               :prefix  =>  'ou=People',
+               :classes => ['inetOrgPerson', 'posixAccount']
 
   #
   # Returns a json hash model to the requesting api
@@ -16,11 +17,17 @@ class LdapUser < ActiveLdap::Base
     end
   end
 
+
+  def self.new_entry(hash_params)
+    new_params = hash_params['new']
+    return LdapUser.new(new_params['uid']) unless new_params['uid'].blank?
+  end
+
   #
   # Processes all parameters that have been submitted and checks to see if any
   # additions or changes have been made to the LDAP record
   ###################################################################################
-  def update_ldap(hash_params)
+  def save(hash_params)
 
     hash_params.each do |key, value|
       case key
@@ -42,10 +49,12 @@ class LdapUser < ActiveLdap::Base
   # Performs the actual ldap modification
   ###################################################################################
   def attribute_update(key, original, modified)
-    case key
-      when 'objectClass'
+    case key.downcase
+      when 'objectclass'
         self.remove_class(original) if modified.blank?
         self.add_class(modified) if original.blank?
+      when 'userpassword'
+        self[key] = ActiveLdap::UserPassword.ssha(modified)
       else
         self[key] = modified
     end

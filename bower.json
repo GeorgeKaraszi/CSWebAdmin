@@ -6,6 +6,7 @@
       "angular-resource": "latest",
       "angular-ui-router": "latest",
       "angular-animate": "latest",
+      "angular-ui-router.stateHelper": "latest",
       "bootstrap-sass-official": "latest"
     }
   },

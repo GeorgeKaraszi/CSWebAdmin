@@ -16,7 +16,7 @@ ldapManager.factory 'User', ['$resource', '$http', ($resource, $http)->
       defaults.patch['Content-Type'] = 'application/json'
       
     create: (attrs)->
-      new @service(user: attrs).$save (user)->
+      new @service(ldapData: attrs).$save (user)->
         attrs.id = user.id
       attrs
 

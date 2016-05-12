@@ -1,10 +1,11 @@
 ldapManager = angular.module('ldapManager')
 
 ldapManager.controller 'UserIndexCtrl', ['$scope', 'User', ($scope, User)->
-  @UserListService = new User()
-  $scope.entryCN= 'UserName'
-  $scope.entryIdName = 'UID'
-  $scope.entryList = @UserListService.all()
+  $scope.init = ()->
+    @userService = new User()
+    $scope.entryCN= 'UserName'
+    $scope.entryIdName = 'UID'
+    $scope.entryList = @userService.all()
 
   $scope.ensureEntryId = (entry)->
     return entry.attributes.uidNumber
@@ -12,28 +13,35 @@ ldapManager.controller 'UserIndexCtrl', ['$scope', 'User', ($scope, User)->
 ]
 
 ldapManager.controller 'UserNewCtrl', ['$scope', 'User', ($scope, User)->
-  $scope.showData = 'Hello World: NewCtrl'
+  $scope.ldapForm = {}
+
+  $scope.init = () ->
+    @userService = new User()
+    $scope.requestUrl = '/api/request/user/'
+
+  $scope.submit = ()->
+    @userService.create($scope.ldapForm)
+  
 ]
 
 ldapManager.controller 'UserEditCtrl', ['$scope', '$stateParams','User', ($scope, $stateParams, User)->
-  $scope.requestUrl = '/api/ldap_users/' + $stateParams.id + '/ldap/request.json'
   $scope.ldapForm = {}
 
   $scope.init = () ->
     @userService = new User($stateParams.id)
+    $scope.requestUrl = '/api/request/user/' + $stateParams.id
     $scope.entryData = @userService.getUser()
 
-    
   $scope.submit = ()->
-    console.log('submitting')
-    console.log(@userService)
     @userService.update($stateParams.id, $scope.ldapForm)
-    console.log('submitted')
 ]
 
-ldapManager.controller 'UserShowCtrl', ['$scope', '$stateParams','User', ($scope, $stateParams, User)->
-  @UserService = new User($stateParams.id)
-  $scope.entryData = @UserService.getUser()
+ldapManager.controller 'UserShowCtrl', ['$scope', '$state', '$stateParams','User', ($scope, $state, $stateParams, User)->
+  $scope.init = ()->
+    @userService = new User($stateParams.id)
+    $scope.entryData = @userService.getUser()
+    $scope.currentState = $state.current.name
+    console.log($scope.currentState.includes('ldap_users'))
 
   $scope.ensureArray = (value)->
     return value if angular.isArray(value)

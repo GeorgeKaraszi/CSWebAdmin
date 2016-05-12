@@ -1,5 +1,14 @@
-<a ui-sref="/.edit({id: entryData.dn})">Edit</a>
-<a ui-sref="/">Back</a>
+<div ng-init="init()">
+  <div ng-if="currentState.includes('ldap_users')">
+    <a ui-sref="ldap_users.edit({id: entryData.dn})">Edit</a>
+    <a ui-sref="ldap_users">Back</a>
+  </div>
+  <div ng-if="currentState.includes('ldap_groups')">
+    <a ui-sref="ldap_groups.edit({id: entryData.dn})">Edit</a>
+    <a ui-sref="ldap_groups">Back</a>
+  </div>
+</div>
+
 <table class='table table-hover'>
   <thead>
   <th>Attribute</th>

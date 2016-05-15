@@ -41,7 +41,7 @@ class LdapUser < ActiveLdap::Base
           end
       end
     end
-    #self.save
+    self.save!
   end
 
   private

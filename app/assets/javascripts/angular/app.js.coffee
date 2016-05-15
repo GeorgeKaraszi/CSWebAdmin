@@ -1,4 +1,4 @@
-ldapManager = angular.module('ldapManager', ['ngAnimate', 'ui.router', 'templates', 'ngResource', 'formBuilder'])
+ldapManager = angular.module('ldapManager', ['ngAnimate', 'ui.router' ,'templates', 'ngResource', 'formBuilder'])
 
 ldapManager.config(['$stateProvider', '$urlRouterProvider', '$locationProvider',
   ($stateProvider, $urlRouterProvider, $locationProvider)->

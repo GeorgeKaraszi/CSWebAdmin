@@ -108,6 +108,7 @@
         ($http.get(templateUrl, {cache: $templateCache}).then (results)->
             return results.data
         ).then (template)->
+
           #
           # Creates and assigns values to a given model. These are nessary for outside
           # controllers that will handel data, to be initalized before a DOM $compile is
@@ -149,6 +150,25 @@
             return newElement;
 
           #
+          # Creates a helper tag that will help inform the user the use of the field that
+          # is being displayed.
+          #
+          # EXTRA: This uses a directive in popover.js.coffee
+          #################################################################################
+          makeHelperTag = (entry)->
+            htmlInput = "<strong>Attribute:</strong>" + entry.key +
+              "</br><strong>Description:</strong>" + entry.description
+
+            newHelpTag = angular.element($document[0].createElement('span'));
+            newHelpTag.addClass(attrs.helpClass) if angular.isDefined(attrs.helpClass)
+            newHelpTag.attr('popover','')
+            newHelpTag.attr('popover-label', '?')
+            newHelpTag.attr('popover-placement', 'right')
+            newHelpTag.attr('popover-html', htmlInput)
+
+            return newHelpTag;
+
+          #
           # Creates a remove tag that is assigned with an ID number and click-event that
           # will remove the spawned field.
           #################################################################################
@@ -163,6 +183,9 @@
             newRemoveParent.append(newRemoveTag)
             return newRemoveParent;
 
+          #
+          # Creates the button that a user will click to 'add' a form field
+          #################################################################################
           makeAddTag = ()->
             newAddParent = angular.element($document[0].createElement('div'))
             newAddParent.addClass('col-sm-3 control-label')
@@ -175,6 +198,10 @@
 
             return newAddParent
 
+          #
+          # Creates a select feild that will display avaiable attributes stored in the
+          # inactive_fields array
+          #################################################################################
           makeSelectField = (options, something)->
             newSelectParent = angular.element($document[0].createElement('div'))
             newSelectParent.addClass('col-sm-3')
@@ -239,6 +266,7 @@
                   setProperty(model, entry.key, undefined, false)
 
               groupElement.append(makeFieldContainer(newElement, entry))
+              groupElement.append(makeHelperTag(entry))
               groupElement.append(makeRemoveTag(id))
 
               return groupElement;
@@ -343,7 +371,7 @@
           #################################################################################
           #angular.forEach(template, formBuilder, element)
 
-          for i in [0 ... template.length-1] by 1
+          for i in [0 ... template.length] by 1
             htmlElement = formBuilder(template[i], i)
             if isVisableField(template[i])
               showFields(template[i], i, htmlElement)

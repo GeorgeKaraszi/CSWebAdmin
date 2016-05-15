@@ -10,25 +10,20 @@ Rails.application.routes.draw do
   authenticated :user do
     root to: 'welcome#index', as: :authenticated_root
 
-    resources :ldap_users do
-      member do
-        get '/ldap/request' => 'requests#ldap_user', :format => 'json'
-        get '/ldap/test' => 'requests#ldap_test', :format => 'json'
+    namespace :api, defaults: {format: :json} do
+      scope '/request' do
+        get '/user/:id'  => 'requests#ldap_user'
+        get '/group/:id' => 'requests#ldap_group'
+        get '/user/'     => 'requests#ldap_user'
+        get '/group/'    => 'requests#ldap_group'
       end
-      collection do
-        get '/ldap/request' => 'requests#ldap_user', :format => 'json'
-        get '/ldap/test' => 'requests#ldap_test', :format => 'json'
-      end
-    end
-    resources :ldap_groups do
-      member do
-        get '/ldap/request' => 'requests#ldap_group', :format => 'json'
-      end
-      collection do
-        get '/ldap/request' => 'requests#ldap_group', :format => 'json'
-      end
+
+      resources :ldap_users, only: [:index, :show, :create, :update, :destroy]
+      resources :ldap_groups, only: [:index, :show, :create, :update, :destroy]
     end
 
+    get "*path.html" => "application#index", :layout => 0
+    get "*path" => "application#index"
   end
   root :to => redirect('login')
 

@@ -129,3 +129,7 @@ footer {
   /* inline-block space fix */
   margin-right:-4px;
 }
+
+.popover{
+  max-width: 50%; // Max Width of the popover (depending on the container!)
+}

@@ -1,109 +1,112 @@
-@app = angular.module('formbuilder', [])
+@app = angular.module('formBuilder', ['ngResource'])
 
-@app.directive 'dynamicForm', ($q, $http, $document, $parse, $templateCache, $compile, $timeout, $filter) ->
-  field_support =
-    'text': {
-      element: 'input',
-      type: 'text',
-      editable: true,
-      textBased: true,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'textarea': {
-      element: 'input',
-      type: 'textarea',
-      editable: true,
-      textBased: true,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'email': {
-      element: 'input',
-      type: 'email',
-      editable: true,
-      textBased: true,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'password': {
-      element: 'input',
-      type: 'password',
-      editable: true,
-      textBased: true,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'number': {
-      element: 'input',
-      type: 'number',
-      editable: true,
-      textBased: true,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'checkbox': {
-      element: 'input',
-      type: 'checkbox',
-      editable: true,
-      textBased: false,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'select': {
-      element: 'select',
-      editable: false,
-      textBased: false,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'radio': {
-      element: 'div',
-      editable: true,
-      textBased: true,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'file': {
-      element: 'input',
-      type: 'file',
-      editable: true,
-      textBased: true,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'hidden': {
-      element: 'input',
-      type: 'hidden',
-      editable: false,
-      textBased: false,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    },
-    'submit': {
-      element: 'input',
-      type: 'text',
-      editable: true,
-      textBased: true,
-      fieldClass: 'form-control',
-      containerClass: 'col-sm-5'
-    }
-  {
-    restrict: 'E',
-    link: ($scope, element, attrs) ->
+@app.directive 'dynamicForm', ['$q', '$http', '$document', '$parse', '$templateCache', '$compile', '$filter',
+  ($q, $http, $document, $parse, $templateCache, $compile, $filter) ->
+    field_support =
+      'text': {
+        element: 'input',
+        type: 'text',
+        editable: true,
+        textBased: true,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'textarea': {
+        element: 'input',
+        type: 'textarea',
+        editable: true,
+        textBased: true,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'email': {
+        element: 'input',
+        type: 'email',
+        editable: true,
+        textBased: true,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'password': {
+        element: 'input',
+        type: 'password',
+        editable: true,
+        textBased: true,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'number': {
+        element: 'input',
+        type: 'number',
+        editable: true,
+        textBased: true,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'checkbox': {
+        element: 'input',
+        type: 'checkbox',
+        editable: true,
+        textBased: false,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'select': {
+        element: 'select',
+        editable: false,
+        textBased: false,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'radio': {
+        element: 'div',
+        editable: true,
+        textBased: true,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'file': {
+        element: 'input',
+        type: 'file',
+        editable: true,
+        textBased: true,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'hidden': {
+        element: 'input',
+        type: 'hidden',
+        editable: false,
+        textBased: false,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      },
+      'submit': {
+        element: 'input',
+        type: 'text',
+        editable: true,
+        textBased: true,
+        fieldClass: 'form-control',
+        containerClass: 'col-sm-5'
+      }
+    {
+      restrict: 'E',
+      link: ($scope, element, attrs) ->
 
-      $scope.active_fields = {}
-      $scope.inactive_fields = {}
-      $scope.selectedField = {}
+        $scope.active_fields = {}
+        $scope.inactive_fields = {}
+        $scope.selectedField = {}
 
-      if(angular.isDefined(attrs.ngModel) && angular.isDefined(attrs.activeModel) &&
-         angular.isDefined(attrs.inactiveModel) && angular.isDefined(attrs.documentModel))
+        if(!angular.isDefined(attrs.ngModel) || !angular.isDefined(attrs.templateUrl))
+          console.log('Error: Require ng-model and template-url properties')
+          return false
 
+        templateUrl = $parse(attrs.templateUrl)($scope)
         model = $parse(attrs.ngModel)($scope)
 
 
-        ($http.get('./ldap/test', {cache: $templateCache}).then (results)->
-          return results.data
+        ($http.get(templateUrl, {cache: $templateCache}).then (results)->
+            return results.data
         ).then (template)->
 
           #
@@ -113,12 +116,12 @@
           #################################################################################
           setProperty = (obj, key, value, buildParent)->
             if(buildParent)
+              obj[key] = {} unless angular.isDefined(obj[key])
               foobar = obj[key]
               foobar[value] = value
-            else if(!angular.isDefined(value))
+            else #if(!angular.isDefined(value))
               obj['new'] = {} unless angular.isDefined(obj['new'])
-            else
-              obj[key] = value unless angular.isDefined(obj[key])
+              obj['new'][key] = value
 
           #
           # Creats a HTML label element with the (entries) title attribute
@@ -147,6 +150,25 @@
             return newElement;
 
           #
+          # Creates a helper tag that will help inform the user the use of the field that
+          # is being displayed.
+          #
+          # EXTRA: This uses a directive in popover.js.coffee
+          #################################################################################
+          makeHelperTag = (entry)->
+            htmlInput = "<strong>Attribute:</strong>" + entry.key +
+              "</br><strong>Description:</strong>" + entry.description
+
+            newHelpTag = angular.element($document[0].createElement('span'));
+            newHelpTag.addClass(attrs.helpClass) if angular.isDefined(attrs.helpClass)
+            newHelpTag.attr('popover','')
+            newHelpTag.attr('popover-label', '?')
+            newHelpTag.attr('popover-placement', 'right')
+            newHelpTag.attr('popover-html', htmlInput)
+
+            return newHelpTag;
+
+          #
           # Creates a remove tag that is assigned with an ID number and click-event that
           # will remove the spawned field.
           #################################################################################
@@ -161,6 +183,9 @@
             newRemoveParent.append(newRemoveTag)
             return newRemoveParent;
 
+          #
+          # Creates the button that a user will click to 'add' a form field
+          #################################################################################
           makeAddTag = ()->
             newAddParent = angular.element($document[0].createElement('div'))
             newAddParent.addClass('col-sm-3 control-label')
@@ -173,6 +198,10 @@
 
             return newAddParent
 
+          #
+          # Creates a select feild that will display avaiable attributes stored in the
+          # inactive_fields array
+          #################################################################################
           makeSelectField = (options, something)->
             newSelectParent = angular.element($document[0].createElement('div'))
             newSelectParent.addClass('col-sm-3')
@@ -227,16 +256,17 @@
               newElement.addClass(field_support[entry.type].fieldClass)
               newElement.attr('type', field_support[entry.type].type)
               newElement.attr('ng-model', makeModel(attrs.ngModel, entry.key, entry.val))
-              setProperty(model, entry.key, {}, false)
 
               if(entry.type == 'text' || entry.type == 'password' || entry.type == 'number')
                 if angular.isDefined(entry.val)
-                  #newElement.attr('value', entry.val)
                   setProperty(model, entry.key, entry.val, true)
+                else if entry.required
+                  setProperty(model, entry.key, '', false)
                 else
                   setProperty(model, entry.key, undefined, false)
 
               groupElement.append(makeFieldContainer(newElement, entry))
+              groupElement.append(makeHelperTag(entry))
               groupElement.append(makeRemoveTag(id))
 
               return groupElement;
@@ -248,6 +278,12 @@
             if(entry.required == false && !angular.isDefined(entry.val))
               return false;
 
+            #Check to see if object class is even needed to be displayed
+            if(entry.key == 'objectClass' && !angular.isDefined(entry.val))
+              objFilter = $filter('filter')(template, {key: 'objectClass'})
+              for i in [0 ... objFilter.length-1] by 1
+                return false if angular.isDefined(objFilter[i].val)
+
             return true;
 
           #
@@ -257,6 +293,7 @@
             entry.htmlElement = htmlElement
 
             $scope.active_fields[id] = entry
+
 
           #
           # Adds an entrie to the list of non-display elements
@@ -284,10 +321,23 @@
 
             return true;
 
+          #
+          # Switches a form field between two lists. Then removes the data from the model.
+          #################################################################################
+          swapFields = (target,destination, index)->
+            destination[index] = target[index]
 
+            if angular.isDefined(model[target[index].key])
+              model[target[index].key][target[index].val] = ''
+
+            if(angular.isDefined(model['new']) && angular.isDefined(model['new'][target[index].key]))
+              model['new'][target[index].key] = ''
+              delete model['new'][target[index].key] unless target[index].required
+
+            delete target[index]
 
           #
-          # Click event
+          # Action: Click event
           #
           # Removes a field from the displayed form, then adds it to the inactive list
           #################################################################################
@@ -296,27 +346,22 @@
             if (angular.isDefined($scope.active_fields[index]) &&
                 !angular.isDefined($scope.inactive_fields[index]))
 
-              $scope.inactive_fields[index] = $scope.active_fields[index]
-
-              model[$scope.active_fields[index].key][$scope.active_fields[index].val] = ''
-              delete $scope.active_fields[index]
-
-              console.log(model)
+              swapFields($scope.active_fields, $scope.inactive_fields, index)
               rebuildForm($scope.active_fields, $scope.inactive_fields)
 
 
           #
-          # Click event
+          # Action: Click event
           #
           # Adds a field from the inactive list to the display list
           #################################################################################
           $scope.addField = ()->
+
             index = $scope.selectedField.model
             if (!angular.isDefined($scope.active_fields[index]) &&
                  angular.isDefined($scope.inactive_fields[index]))
-              $scope.active_fields[index] = $scope.inactive_fields[index]
-              delete $scope.inactive_fields[index]
 
+              swapFields($scope.inactive_fields, $scope.active_fields, index)
               rebuildForm($scope.active_fields, $scope.inactive_fields)
 
           #
@@ -326,7 +371,7 @@
           #################################################################################
           #angular.forEach(template, formBuilder, element)
 
-          for i in [0 ... template.length-1] by 1
+          for i in [0 ... template.length] by 1
             htmlElement = formBuilder(template[i], i)
             if isVisableField(template[i])
               showFields(template[i], i, htmlElement)
@@ -335,3 +380,4 @@
 
           rebuildForm($scope.active_fields, $scope.inactive_fields)
   }
+]

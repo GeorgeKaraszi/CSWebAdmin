@@ -13,7 +13,7 @@ AttributeName.delete_all
 query_insert_names = [
     {
         :title => 'Object Class',
-        :keyattribute => 'ObjectClass',
+        :keyattribute => 'objectClass',
         :description => 'Hierarchical LDAP Schema. This will determine what attributes are available to use.'
     },
     {
@@ -147,6 +147,10 @@ query_insert_user= [
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('givenName').id,
+        :field_type => 'text'
+    },
+    {
+        :attribute_name_id => AttributeName.find_by_keyattribute('sn').id,
         :field_type => 'text'
     },
     {

@@ -43,5 +43,6 @@ ldapManager.controller 'GroupShowCtrl', ['$scope', '$state', '$stateParams', 'Us
 ]
 
 ldapManager.controller 'GroupDestroyCtrl', ['$scope', '$stateParams','Group', ($scope, $stateParams, Group)->
-  $scope.showData = 'Hello World: ShowCtrl'
+  @groupServices = new Group($stateParams.id)
+  @groupServices.delete($stateParams.id)
 ]

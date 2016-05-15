@@ -25,22 +25,18 @@ class Api::LdapGroupsController < ApplicationController
   # POST /ldap_groups
   # POST /ldap_groups.json
   def create
-    @ldap_group = LdapGroup.new(ldap_group_params)
+    @ldap_user = LdapGroup.new_entry(ldap_group_params)
 
-    respond_to do |format|
-      if @ldap_group.save
-        format.html { redirect_to @ldap_group, notice: 'Ldap group was successfully created.' }
-        format.json { render :show, status: :created, location: @ldap_group }
-      else
-        format.html { render :new }
-        format.json { render json: @ldap_group.errors, status: :unprocessable_entity }
-      end
+    if @ldap_user.save(ldap_group_params)
+      render json: true
+    else
+      render json:@ldap_user.errors, nothing: false
     end
   end
 
   # PATCH/PUT /ldap_groups/1.json
   def update
-    if @ldap_group.update_ldap(ldap_group_params)
+    if @ldap_group.save(ldap_group_params)
       render nothing: true
     else
       render json: @ldap_group.errors
@@ -51,10 +47,7 @@ class Api::LdapGroupsController < ApplicationController
   # DELETE /ldap_groups/1.json
   def destroy
     @ldap_group.destroy
-    respond_to do |format|
-      format.html { redirect_to ldap_groups_url, notice: 'Ldap group was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    render json: true
   end
 
   private

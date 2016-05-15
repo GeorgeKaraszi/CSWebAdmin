@@ -16,9 +16,8 @@ class Api::LdapUsersController < ApplicationController
   def create
     @ldap_user = LdapUser.new_entry(ldap_user_params)
 
-#    if @ldap_user.save
     if @ldap_user.save(ldap_user_params)
-      render nothing: true
+      render json: true
     else
       render json:@ldap_user.errors, nothing: false
     end
@@ -37,10 +36,7 @@ class Api::LdapUsersController < ApplicationController
   # DELETE /ldap_users/1.json
   def destroy
     @ldap_user.destroy
-    respond_to do |format|
-      format.html { redirect_to ldap_users_url, notice: 'Ldap user was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    render json: true
   end
 
   private

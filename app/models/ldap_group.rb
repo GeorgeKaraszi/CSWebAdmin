@@ -1,19 +1,15 @@
-class LdapGroup < ActiveLdap::Base
+class LdapGroup < LdapBase
   ldap_mapping dn_attribute: "cn",
                prefix: "ou=Groups"
 
-#
-# Returns a json hash model to the requesting api
-###################################################################################
 
-  def self.json_model(entries)
-    if entries.kind_of?(Array)
-      return entries.map do |hash|
-        {dn: "#{hash['dn']}", cn: hash.cn, attributes:hash.attributes}
-      end
-    else
-      return {dn:"#{entries['dn']}", cn: entries.cn, attributes:entries.attributes}
-    end
+#
+# Creates the user with the necessary input required before being
+# allowing to add additional attributes
+###################################################################################
+  def self.new_entry(hash_params)
+    new_params = hash_params['new']
+    return LdapGroup.new(new_params['cn']) unless new_params['cn'].blank?
   end
 
 #

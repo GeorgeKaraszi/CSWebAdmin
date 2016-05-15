@@ -22,6 +22,10 @@ ldapManager.factory 'User', ['$resource', '$http', ($resource, $http)->
 
     update: (id, attrs)->
       new @service(ldapData: attrs).$update {id: id}
+    
+
+    delete: (id)->
+      new @service.$delete {id: id}
 
     getUser: ()->
       @service.get()

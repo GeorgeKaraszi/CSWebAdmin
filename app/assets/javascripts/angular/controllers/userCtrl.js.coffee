@@ -33,7 +33,7 @@ ldapManager.controller 'UserEditCtrl', ['$scope', '$stateParams','User', ($scope
     $scope.entryData = @userService.getUser()
 
   $scope.submit = ()->
-    @userService.update($stateParams.id, $scope.ldapForm)
+    User.update($stateParams.id, $scope.ldapForm)
 ]
 
 ldapManager.controller 'UserShowCtrl', ['$scope', '$state', '$stateParams','User', ($scope, $state, $stateParams, User)->
@@ -50,5 +50,6 @@ ldapManager.controller 'UserShowCtrl', ['$scope', '$state', '$stateParams','User
 ]
 
 ldapManager.controller 'UserDestroyCtrl', ['$scope', '$stateParams','User', ($scope, $stateParams, User)->
-  $scope.showData = 'Hello World: ShowCtrl'
+    @userService = new User($stateParams.id)
+    @userService.delete($stateParams.id)
 ]

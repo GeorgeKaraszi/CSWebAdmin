@@ -3,13 +3,13 @@
   <div class='col-sm-4 col-centered'>
     <div class = 'panel panel-primary'>
       <div class = 'panel-heading'><h3 class = 'text-center'>Users</h3></div>
-      <div class = 'panel-body'> <h1><%= link_to "#{@user_counter}", ldap_users_path %></h1></div>
+      <div class = 'panel-body'> <h1><a href="/ldap_users"><%= "#{@user_counter}" %></a></h1></div>
     </div>
   </div>
   <div class='col-sm-4 col-centered'>
     <div class = 'panel panel-primary'>
       <div class = 'panel-heading'><h3 class = 'text-center'>Groups</h3></div>
-      <div class = 'panel-body'> <h1><%= link_to "#{@group_counter}", ldap_groups_path %></h1></div>
+      <div class = 'panel-body'> <h1><a href="/ldap_groups"><%= "#{@group_counter}" %></a></h1></div>
     </div>
   </div>
 </div>

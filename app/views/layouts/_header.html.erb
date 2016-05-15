@@ -5,8 +5,8 @@
       <ul class="nav navbar-nav navbar-right">
         <% if user_signed_in? %>
             <li><%= link_to "Home", root_path %></li>
-            <li><%= link_to "Manage Groups", ldap_groups_path %></li>
-            <li><%= link_to "Manage Users", ldap_users_path %></li>
+            <li><%= link_to "Manage Groups", '/ldap_groups' %></li>
+            <li><%= link_to "Manage Users", '/ldap_users' %></li>
             <li><%= link_to "Log out", '/logout', :method => :delete %></li>
         <% else %>
             <li><%= link_to "Log in", 'login' %></li>

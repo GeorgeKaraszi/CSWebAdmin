@@ -1,48 +1,15 @@
-class LdapUser < ActiveLdap::Base
-  ldap_mapping dn_attribute: 'uid',
-               prefix:       'ou=People'
+class LdapUser < LdapBase
+  ldap_mapping :dn_attribute => 'uid',
+               :prefix  =>  'ou=People',
+               :classes => ['inetOrgPerson', 'posixAccount']
 
   #
-  # Returns a model used by rails form builder
+  # Creates the user with the necessary input required before being
+  # allowing to add additional attributes
   ###################################################################################
-  def to_model
-    self
+  def self.new_entry(hash_params)
+    new_params = hash_params['new']
+    return LdapUser.new(new_params['uid']) unless new_params['uid'].blank?
   end
-
-  #
-  # Processes all parameters that have been submitted and checks to see if any
-  # additions or changes have been made to the LDAP record
-  ###################################################################################
-  def update_ldap(hash_params)
-
-    hash_params.each do |key, value|
-      case key
-        when 'new'
-          value.each do |key, value|
-            attribute_update(key, value, value) unless value.blank?
-          end
-        else
-          value.each do |original, modified|
-            attribute_update(key, original, modified) if original != modified
-          end
-      end
-    end
-    #self.save
-  end
-
-  private
-  #
-  # Performs the actual ldap modification
-  ###################################################################################
-  def attribute_update(key, original, modified)
-    case key
-      when 'objectClass'
-        self.remove_class(original) if modified.blank?
-        self.add_class(modified) if original.blank?
-      else
-        self[key] = modified
-    end
-  end
-
 
 end

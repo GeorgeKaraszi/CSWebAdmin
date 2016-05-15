@@ -1,0 +1,25 @@
+<div ng-init="init()">
+  <div ng-if="currentState.includes('ldap_users')">
+    <a ui-sref="ldap_users.edit({id: entryData.dn})">Edit</a>
+    <a ui-sref="ldap_users">Back</a>
+  </div>
+  <div ng-if="currentState.includes('ldap_groups')">
+    <a ui-sref="ldap_groups.edit({id: entryData.dn})">Edit</a>
+    <a ui-sref="ldap_groups">Back</a>
+  </div>
+</div>
+
+<table class='table table-hover'>
+  <thead>
+  <th>Attribute</th>
+  <th>Value/s</th>
+  </thead>
+  <tbody>
+      <tr ng-repeat = '(key, value) in entryData.attributes'>
+        <td>{{key}}</td>
+        <td><ul class='list-unstyled'>
+          <li ng-repeat="element in ensureArray(value)">{{element}}</li>
+        </ul></td>
+      </tr>
+  </tbody>
+</table>

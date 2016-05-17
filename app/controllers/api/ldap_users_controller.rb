@@ -27,9 +27,9 @@ class Api::LdapUsersController < ApplicationController
   # PATCH/PUT /ldap_users/1.json
   def update
     if @ldap_user.save(ldap_user_params)
-      render nothing: true
+      render json: {notice: 'Ldap user was successfully updated.'}, status: :ok
     else
-      render json: @ldap_user.errors
+      render json: @ldap_user.errors, status: :unprocessable_entity
     end
   end
 

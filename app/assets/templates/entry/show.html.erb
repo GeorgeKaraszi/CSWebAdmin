@@ -1,3 +1,5 @@
+<div id="notice">{{notice}}</div>
+
 <div ng-init="init()">
   <div ng-if="currentState.includes('ldap_users')">
     <a ui-sref="ldap_users.edit({id: entryData.dn})">Edit</a>

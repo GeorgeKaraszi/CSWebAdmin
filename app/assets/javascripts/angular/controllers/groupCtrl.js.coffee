@@ -22,7 +22,7 @@ ldapManager.controller 'GroupEditCtrl', ['$scope', '$stateParams','Group', ($sco
 
   $scope.init = () ->
     @groupServices = new Group($stateParams.id)
-    $scope.entryData = @groupServices.getGroup()
+    $scope.entryData = @groupServices.get()
 
 
   $scope.submit = ()->
@@ -33,7 +33,7 @@ ldapManager.controller 'GroupEditCtrl', ['$scope', '$stateParams','Group', ($sco
 ldapManager.controller 'GroupShowCtrl', ['$scope', '$state', '$stateParams', 'User', ($scope, $state, $stateParams, Group)->
   $scope.init = ()->
     @groupServices = new User($stateParams.id)
-    $scope.entryData = @groupServices.getGroup()
+    $scope.entryData = @groupServices.get()
     $scope.currentState = $state.current
 
   $scope.ensureArray = (value)->

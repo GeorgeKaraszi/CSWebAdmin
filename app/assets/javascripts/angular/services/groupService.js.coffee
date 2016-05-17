@@ -21,12 +21,15 @@ ldapManager.factory 'Group', ['$resource', '$http', ($resource, $http)->
       attrs
 
     update: (id, attrs)->
-      new @service(ldapData: attrs).$update {id: id}
+       @service(ldapData: attrs).$update( {id: id}, ()->
+        console.log('Made it')
+      )
+      
 
     delete: (id)->
       new @service.$delete {id: id}
 
-    getGroup: ()->
+    get: ()->
       @service.get()
 
     all: ()->

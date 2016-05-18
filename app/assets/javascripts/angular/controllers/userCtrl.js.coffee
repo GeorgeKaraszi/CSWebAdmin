@@ -1,59 +1,55 @@
 ldapManager = angular.module('ldapManager')
 
-ldapManager.controller 'UserIndexCtrl', ['$scope', 'Notice', 'User', ($scope, Notice, User)->
-  console.log('init')
+ldapManager.controller 'UserIndexCtrl', ['$scope', 'Crud', ($scope, Crud)->
   $scope.init = ()->
-    $scope.notice = Notice.Message()
-    @userService = new User()
+    console.log('Init IndexController')
+    @crudService = new Crud()
     $scope.entryCN= 'UserName'
     $scope.entryIdName = 'UID'
-    $scope.entryList = @userService.all()
+    $scope.entryList = @crudService.all()
 
   $scope.ensureEntryId = (entry)->
     return entry.attributes.uidNumber
 
 ]
 
-ldapManager.controller 'UserNewCtrl', ['$scope', 'User', ($scope, User)->
+ldapManager.controller 'UserNewCtrl', ['$scope', 'Notice','Crud', ($scope, Notice, Crud)->
   $scope.ldapForm = {}
-  console.log('this')
+
   $scope.init = () ->
-    @userService = new User()
+    console.log('Init NewController')
+    Notice.init()
+    @crudService = new Crud()
     $scope.requestUrl = '/api/request/user/'
 
   $scope.submit = ()->
-    @userService.create($scope.ldapForm)
+    @crudService.create($scope.ldapForm)
   
 ]
 
-ldapManager.controller 'UserEditCtrl', ['$scope','$state', '$stateParams', 'Notice', 'User',
-  ($scope, $state, $stateParams, Notice, User)->
+ldapManager.controller 'UserEditCtrl', ['$scope', '$stateParams', 'Notice', 'Crud',
+  ($scope, $stateParams, Notice, Crud)->
     $scope.ldapForm = {}
 
     $scope.init = () ->
+      console.log('Init EditController')
       Notice.init()
-      @userService = new User($stateParams.id)
+      @crudService = new Crud($stateParams.id)
       $scope.requestUrl = '/api/request/user/' + $stateParams.id
-      $scope.entryData = @userService.get()
+      $scope.entryData = @crudService.get()
 
     $scope.submit = ()->
-      @userService.update($stateParams.id, $scope.ldapForm).then(
-        (goodStatus)->
-          Notice.SetMessage(goodStatus.notice, 1)
-          $state.go('ldap_users.show', {id: $stateParams.id}, {reload: true})
+      @crudService.update($stateParams.id, $scope.ldapForm)
 
-        ,(badStatus)->
-          $scope.notice = badStatus.notice
-          console.log('Error')
-      )
 ]
 
-ldapManager.controller 'UserShowCtrl', ['$scope','$state', '$stateParams', 'User',
-  ($scope,$state, $stateParams, User)->
+ldapManager.controller 'UserShowCtrl', ['$scope', '$stateParams', 'Notice', 'Crud',
+  ($scope, $stateParams, Notice, Crud)->
     $scope.init = ()->
-      @userService = new User($stateParams.id)
-      $scope.entryData = @userService.get()
-      $scope.currentState = $state.current.name
+      console.log('Init ShowController')
+      @crudService = new Crud($stateParams.id)
+      $scope.entryData = @crudService.get()
+      $scope.notice = Notice.GetMessage()
 
     $scope.ensureArray = (value)->
       return value if angular.isArray(value)
@@ -61,10 +57,10 @@ ldapManager.controller 'UserShowCtrl', ['$scope','$state', '$stateParams', 'User
   
 ]
 
-ldapManager.controller 'UserDestroyCtrl', ['$scope', '$state', '$stateParams','User',
-  ($scope, $state, $stateParams, User)->
-      @userService = new User($stateParams.id)
-      @userService.delete($stateParams.id)
+ldapManager.controller 'UserDestroyCtrl', ['$scope', '$state', '$stateParams','Crud',
+  ($scope, $state, $stateParams, Crud)->
+      @crudService = new Crud($stateParams.id)
+      @crudService.delete($stateParams.id)
 
-      $state.go('ldap_users',{},{reload: true})
+      $state.go('^',{},{reload: true})
 ]

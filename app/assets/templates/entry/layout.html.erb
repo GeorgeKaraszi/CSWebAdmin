@@ -1,24 +1,3 @@
-<div ng-init= "init()" class="dashboard-ui-view" ui-view>
-  <table class='table table-hover'>
-    <thead>
-    <tr>
-      <th class='col-md-3'>{{entryCN}}</th>
-      <th class='col-md-2'>{{entryIdName}}</th>
-      <th class='col-md-2'></th>
-      <th class='col-md-2'>Options</th>
-      <th class='col-md-2'></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="entry in entryList">
-      <td>{{entry.cn}}</td>
-      <td>{{ensureEntryId(entry)}}</td>
-      <td><a ui-sref=".show({id: entry.dn})">Show</a></td>
-      <td><a ui-sref=".edit({id: entry.dn})">Edit</a></td>
-      <td><a ui-sref=".destroy({id: entry.dn})">Delete</a></td>
-    </tr>
-    </tbody>
-  </table>
-  <a ui-sref="ldap_users.new">new</a>
-
+<div class="dashboard-ui-view" ui-view>
+  <div ng-include="'entry/entry_list.html'"></div>
 </div>

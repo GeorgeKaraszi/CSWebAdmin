@@ -1,9 +1,10 @@
 ldapManager = angular.module('ldapManager')
 
-ldapManager.controller 'UserIndexCtrl', ['$scope', 'Crud', ($scope, Crud)->
+ldapManager.controller 'UserIndexCtrl', ['$scope', 'Notice', 'Crud', ($scope, Notice, Crud)->
   $scope.init = ()->
     console.log('Init IndexController')
     @crudService = new Crud()
+    $scope.notice = Notice.GetMessage()
     $scope.entryCN= 'UserName'
     $scope.entryIdName = 'UID'
     $scope.entryList = @crudService.all()
@@ -57,10 +58,8 @@ ldapManager.controller 'UserShowCtrl', ['$scope', '$stateParams', 'Notice', 'Cru
   
 ]
 
-ldapManager.controller 'UserDestroyCtrl', ['$scope', '$state', '$stateParams','Crud',
-  ($scope, $state, $stateParams, Crud)->
-      @crudService = new Crud($stateParams.id)
-      @crudService.delete($stateParams.id)
-
-      $state.go('^',{},{reload: true})
+ldapManager.controller 'UserDestroyCtrl', ['$scope', '$stateParams','Crud',
+  ($scope, $stateParams, Crud)->
+    @crudService = new Crud($stateParams.id)
+    @crudService.delete($stateParams.id)
 ]

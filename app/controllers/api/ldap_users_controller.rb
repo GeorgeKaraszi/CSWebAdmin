@@ -17,9 +17,9 @@ class Api::LdapUsersController < ApplicationController
     @ldap_user = LdapUser.new_entry(ldap_user_params)
 
     if @ldap_user.save(ldap_user_params)
-      render json: true
+      render json: {notice: 'Ldap user was successfully created.', id:@ldap_user['dn']}, status: :ok
     else
-      render json:@ldap_user.errors, nothing: false
+      render json: {notice: @ldap_user.errors}, status: :unprocessable_entity
     end
 
   end
@@ -29,14 +29,17 @@ class Api::LdapUsersController < ApplicationController
     if @ldap_user.save(ldap_user_params)
       render json: {notice: 'Ldap user was successfully updated.'}, status: :ok
     else
-      render json: @ldap_user.errors, status: :unprocessable_entity
+      render json: {notice: @ldap_user.errors}, status: :unprocessable_entity
     end
   end
 
   # DELETE /ldap_users/1.json
   def destroy
-    @ldap_user.destroy
-    render json: true
+    if @ldap_user.destroy
+      render json: {notice: 'Ldap group was successfully deleted.'}, status: :ok
+    else
+      render json: {notice: @ldap_user.errors}, status: :bad_request
+    end
   end
 
   private

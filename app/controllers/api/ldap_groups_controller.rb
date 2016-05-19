@@ -16,9 +16,9 @@ class Api::LdapGroupsController < ApplicationController
     @ldap_group = LdapGroup.new_entry(ldap_group_params)
 
     if @ldap_group.save(ldap_group_params)
-      render json: true
+      render json: {notice: 'Ldap group was successfully created.'}, status: :ok
     else
-      render json:@ldap_group.errors, nothing: false
+      render json: {notice: @ldap_user.errors}, status: :unprocessable_entity
     end
 
   end
@@ -28,14 +28,17 @@ class Api::LdapGroupsController < ApplicationController
     if @ldap_group.save(ldap_group_params)
       render json: {notice: 'Ldap group was successfully updated.'}, status: :ok
     else
-      render json: @ldap_group.errors, status: :unprocessable_entity
+      render json: {notice: @ldap_user.errors}, status: :unprocessable_entity
     end
   end
 
 # DELETE /ldap_groups/1.json
   def destroy
-    @ldap_group.destroy
-    render json: true
+    if @ldap_group.destroy
+      render json: {notice: 'Ldap group was successfully deleted.'}, status: :ok
+    else
+      render json: {notice: @ldap_group.errors}, status: :bad_request
+    end
   end
 
   private

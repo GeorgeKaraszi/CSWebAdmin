@@ -21,9 +21,15 @@ ldapManager.factory 'Crud', ['$resource', '$http', '$state', 'Notice',
         defaults.patch['Content-Type'] = 'application/json'
 
       create: (attrs)->
-        new @service(ldapData: attrs).$save (entry)->
-          attrs.id = entry.id
-        attrs
+        new @service(ldapData: attrs).$save
+#        .then(
+#          (sucessResults)->
+#            Notice.SetMessage(sucessResults.notice, 1)
+#            $state.go('^.show', {id: sucessResults.id}, {reload: true})
+#
+#          ,(rejectResults)->
+#            Notice.SetMessage(rejectResults.notice, 1)
+#        )
 
       update: (id, attrs)->
         errorMessage = undefined
@@ -32,14 +38,18 @@ ldapManager.factory 'Crud', ['$resource', '$http', '$state', 'Notice',
             Notice.SetMessage(sucessResults.notice, 1)
             $state.go('^.show', {id: id}, {reload: true})
 
-        ,(rejectResults)->
-          Notice.SetMessage(rejectResults.notice, 1)
-          console.log('placeholder')
+          ,(rejectResults)->
+            Notice.SetMessage(rejectResults.notice, 1)
+            console.log('placeholder')
 
         )
 
       delete: (id)->
-        new @service.$delete {id: id}
+         @service.remove({id:id},(sucessResults)->
+            #Notice.SetMessage(sucessResults.notice, 1)
+            console.log(sucessResults)
+            $state.go('^', {id: id}, {reload: true})
+         )
 
       get: ()->
         @service.get()

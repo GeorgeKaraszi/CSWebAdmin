@@ -9,7 +9,6 @@ ldapManager.factory 'Notice', ['$rootScope', ($rootScope)->
     GetMessage: ()->
 
       if angular.isDefined($rootScope.noticeSys)
-        console.log($rootScope.noticeSys)
         if $rootScope.noticeSys.displayed < 2
           $rootScope.noticeSys.displayed += 1 #UI -ROUTE error crappy fix. Controller is called twice.
           return $rootScope.noticeSys.message;

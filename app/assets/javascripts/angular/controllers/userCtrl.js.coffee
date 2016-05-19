@@ -2,7 +2,6 @@ ldapManager = angular.module('ldapManager')
 
 ldapManager.controller 'UserIndexCtrl', ['$scope', 'Notice', 'Crud', ($scope, Notice, Crud)->
   $scope.init = ()->
-    console.log('Init IndexController')
     @crudService = new Crud()
     $scope.notice = Notice.GetMessage()
     $scope.entryCN= 'UserName'
@@ -18,7 +17,6 @@ ldapManager.controller 'UserNewCtrl', ['$scope', 'Notice','Crud', ($scope, Notic
   $scope.ldapForm = {}
 
   $scope.init = () ->
-    console.log('Init NewController')
     Notice.init()
     @crudService = new Crud()
     $scope.requestUrl = '/api/request/user/'
@@ -33,7 +31,6 @@ ldapManager.controller 'UserEditCtrl', ['$scope', '$stateParams', 'Notice', 'Cru
     $scope.ldapForm = {}
 
     $scope.init = () ->
-      console.log('Init EditController')
       Notice.init()
       @crudService = new Crud($stateParams.id)
       $scope.requestUrl = '/api/request/user/' + $stateParams.id
@@ -47,7 +44,6 @@ ldapManager.controller 'UserEditCtrl', ['$scope', '$stateParams', 'Notice', 'Cru
 ldapManager.controller 'UserShowCtrl', ['$scope', '$stateParams', 'Notice', 'Crud',
   ($scope, $stateParams, Notice, Crud)->
     $scope.init = ()->
-      console.log('Init ShowController')
       @crudService = new Crud($stateParams.id)
       $scope.entryData = @crudService.get()
       $scope.notice = Notice.GetMessage()

@@ -1,4 +1,5 @@
 class Api::LdapGroupsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_ldap_group, only: [:show, :update, :destroy]
 
 # GET /ldap_groups.json

@@ -16,7 +16,12 @@ ldapManager.factory 'Notice', ['$rootScope', ($rootScope)->
       return undefined
 
     SetMessage: (message, msg_type)->
-      $rootScope.noticeSys = {displayed: false, message: message, msg_type: msg_type}
+
+      #temporary soultion, this will be exapaned to become more formatted later on
+      if angular.isArray(message)
+        $rootScope.noticeSys = {displayed: false, message: message[0], msg_type: msg_type}
+      else
+        $rootScope.noticeSys = {displayed: false, message: message, msg_type: msg_type}
       return true
   }
 ]

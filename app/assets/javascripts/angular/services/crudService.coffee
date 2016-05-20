@@ -38,7 +38,8 @@ ldapManager.factory 'Crud', ['$resource', '$http', '$state', 'Notice',
             $state.go('^.show', {id: id}, {reload: true})
 
           ,(rejectResults)->
-            Notice.SetMessage(rejectResults.notice, 1)
+            console.log(rejectResults.data)
+            Notice.SetMessage(rejectResults.data.notice, 1)
             console.log('placeholder')
 
         )

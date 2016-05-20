@@ -1,4 +1,5 @@
 class Api::RequestsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_user, only: [:ldap_user]
   before_action :set_group, only: [:ldap_group]
 

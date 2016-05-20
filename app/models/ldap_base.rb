@@ -33,6 +33,20 @@ class LdapBase < ActiveLdap::Base
       end
     end
     self.save!
+
+  rescue => e
+    false
+  end
+
+
+  def error_message
+    msg = []
+    self.errors.messages.each do |k,v|
+      v.each do |e|
+        msg.push("#{k} #{e}")
+      end
+    end
+    msg
   end
 
   private

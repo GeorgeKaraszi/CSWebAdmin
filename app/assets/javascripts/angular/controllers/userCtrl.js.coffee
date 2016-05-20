@@ -18,11 +18,16 @@ ldapManager.controller 'UserNewCtrl', ['$scope', 'Notice','Crud', ($scope, Notic
 
   $scope.init = () ->
     Notice.init()
+    $scope.service = Notice
     @crudService = new Crud()
     $scope.requestUrl = '/api/request/user/'
 
   $scope.submit = ()->
     @crudService.create($scope.ldapForm)
+
+    $scope.$watch('service.GetMessage()', (newMessage)->
+      $scope.notice = newMessage
+    )
   
 ]
 
@@ -32,12 +37,17 @@ ldapManager.controller 'UserEditCtrl', ['$scope', '$stateParams', 'Notice', 'Cru
 
     $scope.init = () ->
       Notice.init()
+      $scope.service = Notice
       @crudService = new Crud($stateParams.id)
       $scope.requestUrl = '/api/request/user/' + $stateParams.id
       $scope.entryData = @crudService.get()
 
     $scope.submit = ()->
       @crudService.update($stateParams.id, $scope.ldapForm)
+
+    $scope.$watch('service.GetMessage()', (newMessage)->
+      $scope.notice = newMessage
+    )
 
 ]
 

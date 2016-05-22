@@ -58,7 +58,7 @@ RSpec.describe Api::LdapUsersController, type: :controller do
 
   describe "Get 'show'" do
     login_user
-    
+
     let(:user) {'uid=rspecTester'}
     let(:bad_user) {'uid=doesNotExist'}
 

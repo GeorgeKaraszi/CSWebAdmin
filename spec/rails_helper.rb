@@ -20,6 +20,11 @@ RSpec.configure do |config|
   config.extend ControllerMacros, :type => :controller
   config.include FactoryGirl::Syntax::Methods
 
+  config.before(:suite) do
+    user = LdapUser.find('uid=rspecTester')
+    user.destroy
+  end
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.

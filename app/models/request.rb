@@ -60,7 +60,48 @@ class Request
   end
 
 
+  def self.must_have(entry)
+    collect_attributes(entry, entry.must)
+  end
+
+
+  def self.may_have(entry)
+    collect_attributes(entry, entry.may)
+  end
+
   private
+
+  def self.collect_attributes(entry, collection)
+    attribute_list = collection.collect {|k| k.name.to_s}
+    query = query_fields_test(entry)
+    query = query.select('attribute_names.keyattribute, attribute_names.title, attribute_names.description')
+                    .where('attribute_names.keyattribute' => attribute_list)
+
+    query_hash = query.inject({}) do |hash,value|
+      hash[value.keyattribute] = {d: value.description, a: value.title}
+      hash
+    end
+
+    collection.inject([]) do |arr, value|
+      query_hash[value.name].nil? ?
+          if value.aliases.empty?
+            arr.push({key: value.name, alias: value.name, description: value.description})
+          else
+            arr.push({key: value.name, alias: value.aliases.first, description: value.description})
+          end :
+          arr.push({key: value.name, alias: query_hash[value.name][:a], description: query_hash[value.name][:d]})
+      arr
+    end
+  end
+
+  #
+  # Communicants with the database to select all possible attributes for a given OU
+  # and their field types
+  ###################################################################################
+  def self.query_fields_test(entry)
+    ou = entry.base.rdns.first['ou']
+    AttributeField.joins(:attribute_type, :attribute_name).where("attribute_types.name = '#{ou}' ")
+  end
 
   #
   # Communicants with the database to select all possible attributes for a given OU

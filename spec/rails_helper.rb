@@ -21,8 +21,10 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
 
   config.before(:suite) do
-    user = LdapUser.find('uid=rspecTester')
-    user.destroy
+    if LdapUser.exists?('uid=rspecTester')
+      user = LdapUser.find('uid=rspecTester')
+      user.destroy
+    end
   end
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your

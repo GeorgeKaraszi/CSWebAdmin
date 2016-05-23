@@ -17,7 +17,6 @@ class LdapUser < LdapBase
   # allowing to add additional attributes
   ###################################################################################
   def self.new!(hash_params)
-    new_params = hash_params[:new]
     unless hash_params[:new].nil?
       unless hash_params[:new][:userPassword].nil?
         hash_params[:new][:userPassword] = ActiveLdap::UserPassword.ssha(hash_params[:new][:userPassword])

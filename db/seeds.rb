@@ -176,6 +176,10 @@ query_insert_user= [
         :field_type => 'text'
     },
     {
+        :attribute_name_id => AttributeName.find_by_keyattribute('displayName').id,
+        :field_type => 'text'
+    },
+    {
         :attribute_name_id => AttributeName.find_by_keyattribute('street').id,
         :field_type => 'text'
     }

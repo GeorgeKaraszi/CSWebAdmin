@@ -168,7 +168,7 @@
           #################################################################################
           makeRemoveTag = (index) ->
             newRemoveParent = angular.element($document[0].createElement('div'))
-            newRemoveParent.addClass(attrs.rmContainerClass) if angular.isDefined(attrs.rmContainerClass)
+            newRemoveParent.addClass(attrs.actionContainerClass) if angular.isDefined(attrs.actionContainerClass)
 
             newRemoveTag = angular.element($document[0].createElement('span'))
             newRemoveTag.addClass(attrs.removeClass) if angular.isDefined(attrs.removeClass)
@@ -176,6 +176,19 @@
             newRemoveTag.append('Remove')
             newRemoveParent.append(newRemoveTag)
             return newRemoveParent;
+
+          #
+          # Creates a tag to inform the user that the field is required to be completed
+          #################################################################################
+          makeRequiredTag = (index) ->
+            newRequiredParent = angular.element($document[0].createElement('div'))
+            newRequiredParent.addClass(attrs.actionContainerClass) if angular.isDefined(attrs.actionContainerClass)
+
+            newRequiredTag = angular.element($document[0].createElement('span'))
+            newRequiredTag.addClass(attrs.requiredClass) if angular.isDefined(attrs.requiredClass)
+            newRequiredTag.append('Required')
+            newRequiredParent.append(newRequiredTag)
+            return newRequiredParent;
 
           #
           # Creates the button that a user will click to 'add' a form field
@@ -257,7 +270,11 @@
 
               groupElement.append(makeFieldContainer(newElement, entry))
               groupElement.append(makeHelperTag(entry))
-              groupElement.append(makeRemoveTag(id)) unless entry.required
+
+              if entry.required
+                groupElement.append(makeRequiredTag(id))
+              else
+                groupElement.append(makeRemoveTag(id))
 
               return groupElement;
 

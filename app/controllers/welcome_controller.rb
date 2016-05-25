@@ -1,4 +1,5 @@
 class WelcomeController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_counters, only: [:index]
   def index
   end

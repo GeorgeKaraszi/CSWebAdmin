@@ -15,59 +15,103 @@ class Request
   # Returns a list containing attributes that have already been assigned to the LDAP
   # entry. And attributes that are available for the LDAP entry.
   ###################################################################################
-  def self.attribute_query(ldap_entry, ou)
-
-    request_hash               = Array.new
-    query                      = query_fields(ou)
-    attribute_list             = ldap_entry.attributes.keys.select { |k| k if k != 'objectClass' }
-    query_available_attributes = select_fields(query).where.not('attribute_names.keyattribute' => attribute_list)
+  def self.attribute_query(entry)
+    must = must_have(entry)
+    may = unique(may_have(entry), must, :key)
+    attribute = entry.attributes
 
 
-    ldap_entry.attributes.each do |key, value|
-      query_results = select_fields_where(query, 'attribute_names.keyattribute' => "#{key}").first
-      values = (value.kind_of?(Array) ? value : Array(value))
+    request = attribute.inject([]) do |arr, (key,element)|
+      value = element unless element.is_a?(Array)
+      value ||= element.join(',')
 
-      values.each do |element|
-        unless query_results == nil
-          hash_input = {
-              :title       => query_results.title,
-              :description => query_results.description,
-              :type        => query_results.field_type,
-              :key         => query_results.keyattribute,
-              #enum => entry.enum   -- Add this once value restrictions are in place (select and radio buttons)
-              :val         => element
-          }
+      index = must.find_index {|e| e[:key] == key}
+      hash_insert = must.delete_at(index) unless index.nil?
+      hash_insert ||= may.delete_at(may.find_index {|e| e[:key] == key})
 
-          request_hash.push(hash_input)
-        end
+      unless hash_insert.nil?
+        hash_insert[:val] = value
+        arr.push(hash_insert)
       end
+
+      arr
     end
 
-    query_available_attributes.each do |entry|
-      hash_input = {
-          :title       => entry.title,
-          :key         => entry.keyattribute,
-          :description => entry.description,
-          #enum => entry.enum   -- Add this once value restrictions are in place
-          :type        => entry.field_type,
-          :required    => entry.required
-      }
-
-      request_hash.push(hash_input)
-    end
-
-    request_hash
+    request += must unless must.empty?
+    request += may unless may.empty?
+    request
   end
 
+  #
+  # Returns a new array containing unique hash elements that are compared by a key
+  # value
+  ###################################################################################
+  def self.unique(target, source, key)
+
+    target.inject([]) do |arr, e|
+      list = source.select {|s| s[key] == e[key]}
+      arr.push(e) if list.empty?
+      arr
+    end
+
+  end
+
+  #
+  # Returns an array of hashes containing attributes the entry requires
+  ###################################################################################
+  def self.must_have(entry)
+    collect_attributes(entry, entry.must).inject([]) do |arr, element|
+      element[:required] = true
+      arr.push(element)
+      arr
+    end
+
+  end
+
+  #
+  # returns an array of hashes containing attributes the entry 'could' use
+  ###################################################################################
+  def self.may_have(entry)
+    collect_attributes(entry, entry.may)
+  end
 
   private
+
+  #
+  # returns an array of hashes containing a list of attributes that are matched
+  # defined the associated database
+  ###################################################################################
+  def self.collect_attributes(entry, collection)
+    attribute_list = collection.collect {|k| k.name.to_s}
+    query = query_fields(entry)
+    query = select_fields_where(query, 'attribute_names.keyattribute' => attribute_list)
+
+    query_hash = query.inject({}) do |hash,value|
+      hash[value.keyattribute] = {d: value.description, a: value.title, f: value.field_type}
+      hash
+    end
+
+    collection.inject([]) do |arr, value|
+      unless query_hash[value.name].nil?
+          arr.push({
+                       key: value.name,
+                       title: query_hash[value.name][:a],
+                       description: query_hash[value.name][:d],
+                       type: query_hash[value.name][:f]
+                   })
+      end
+
+      arr
+    end
+  end
 
   #
   # Communicants with the database to select all possible attributes for a given OU
   # and their field types
   ###################################################################################
-  def self.query_fields(type_name)
-    AttributeField.joins(:attribute_type, :attribute_name).where("attribute_types.name = '#{type_name}' ")
+  def self.query_fields(entry)
+    ou = entry.base.rdns.first['ou']
+    AttributeField.joins(:attribute_type, :attribute_name).where("attribute_types.name = '#{ou}' ")
   end
 
   #

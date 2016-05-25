@@ -7,25 +7,23 @@ Rails.application.routes.draw do
   devise_for :users, :path => '', :path_names => {:sign_in => 'login', :sign_out => 'logout'}
 
 
-  authenticated :user do
-    root to: 'welcome#index', as: :authenticated_root
+  root to: 'welcome#index'
 
-    namespace :api, defaults: {format: :json} do
-      scope '/request' do
-        get '/user/:id'  => 'requests#ldap_user'
-        get '/group/:id' => 'requests#ldap_group'
-        get '/user/'     => 'requests#ldap_user'
-        get '/group/'    => 'requests#ldap_group'
-      end
-
-      resources :ldap_users, only: [:index, :show, :create, :update, :destroy]
-      resources :ldap_groups, only: [:index, :show, :create, :update, :destroy]
+  namespace :api, defaults: {format: :json} do
+    scope '/request' do
+      get '/user/:id'  => 'requests#ldap_user'
+      get '/group/:id' => 'requests#ldap_group'
+      get '/user/'     => 'requests#ldap_user'
+      get '/group/'    => 'requests#ldap_group'
     end
 
-    get "*path.html" => "application#index", :layout => 0
-    get "*path" => "application#index"
+
+    resources :ldap_users, only: [:index, :show, :create, :update, :destroy]
+    resources :ldap_groups, only: [:index, :show, :create, :update, :destroy]
   end
-  root :to => redirect('login')
+
+  get "*path.html" => "application#index", :layout => 0
+  get "*path" => "application#index"
 
 
   # The priority is based upon order of creation: first created -> highest priority.

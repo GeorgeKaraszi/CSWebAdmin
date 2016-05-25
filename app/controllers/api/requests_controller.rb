@@ -1,4 +1,5 @@
 class Api::RequestsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_user, only: [:ldap_user]
   before_action :set_group, only: [:ldap_group]
 
@@ -9,7 +10,7 @@ class Api::RequestsController < ApplicationController
 
   def ldap_user
     if @ldap_user
-      render json: Request.attribute_query(@ldap_user, 'People')
+      render json: Request.attribute_query(@ldap_user)
     else
       render nothing: false
     end
@@ -17,7 +18,7 @@ class Api::RequestsController < ApplicationController
 
   def ldap_group
     if @ldap_group
-      render json: Request.attribute_query(@ldap_group, 'Groups')
+      render json: Request.attribute_query(@ldap_group)
     else
       render nothing: false
     end

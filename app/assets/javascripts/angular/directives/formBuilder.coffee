@@ -114,14 +114,8 @@
           # controllers that will handel data, to be initalized before a DOM $compile is
           # issued. Otherwise spawned field models will not update.
           #################################################################################
-          setProperty = (obj, key, value, buildParent)->
-            if(buildParent)
-              obj[key] = {} unless angular.isDefined(obj[key])
-              foobar = obj[key]
-              foobar[value] = value
-            else #if(!angular.isDefined(value))
-              obj['new'] = {} unless angular.isDefined(obj['new'])
-              obj['new'][key] = value
+          setProperty = (obj, key, value)->
+              obj[key] = value
 
           #
           # Creats a HTML label element with the (entries) title attribute
@@ -174,7 +168,7 @@
           #################################################################################
           makeRemoveTag = (index) ->
             newRemoveParent = angular.element($document[0].createElement('div'))
-            newRemoveParent.addClass(attrs.rmContainerClass) if angular.isDefined(attrs.rmContainerClass)
+            newRemoveParent.addClass(attrs.actionContainerClass) if angular.isDefined(attrs.actionContainerClass)
 
             newRemoveTag = angular.element($document[0].createElement('span'))
             newRemoveTag.addClass(attrs.removeClass) if angular.isDefined(attrs.removeClass)
@@ -182,6 +176,19 @@
             newRemoveTag.append('Remove')
             newRemoveParent.append(newRemoveTag)
             return newRemoveParent;
+
+          #
+          # Creates a tag to inform the user that the field is required to be completed
+          #################################################################################
+          makeRequiredTag = (index) ->
+            newRequiredParent = angular.element($document[0].createElement('div'))
+            newRequiredParent.addClass(attrs.actionContainerClass) if angular.isDefined(attrs.actionContainerClass)
+
+            newRequiredTag = angular.element($document[0].createElement('span'))
+            newRequiredTag.addClass(attrs.requiredClass) if angular.isDefined(attrs.requiredClass)
+            newRequiredTag.append('Required')
+            newRequiredParent.append(newRequiredTag)
+            return newRequiredParent;
 
           #
           # Creates the button that a user will click to 'add' a form field
@@ -231,14 +238,10 @@
           #
           # Creates the form's ID tag that will be returned to the server for evlauation
           # Output Examples:
-          #  If pre-existing value exists: returns (MODELNAME)['gidNumber']['123']
-          #  If no value exists: (MODELNAME)['new']['gidNumber']
+          #  If pre-existing value exists: returns (MODELNAME)['gidNumber']
           #################################################################################
-          makeModel = (scope_model, fieldId, val)->
-            if angular.isDefined(val)
-              return (scope_model + "['" + fieldId + "']" + "['" + val + "']")
-            else
-              return (scope_model + "['new']['" + fieldId + "']" )
+          makeModel = (scope_model, fieldId)->
+              return (scope_model + "['" + fieldId + "']")
 
 
           #
@@ -252,22 +255,26 @@
               entry.model = id
               groupElement.append(makeLabel(entry))
 
+              if(entry.type == 'text' || entry.type == 'password' || entry.type == 'number')
+                if angular.isDefined(entry.val)
+                  setProperty(model, entry.key, entry.val)
+                else if entry.required
+                  setProperty(model, entry.key, '')
+                else
+                  setProperty(model, entry.key, undefined)
+
               newElement = angular.element($document[0].createElement(field_support[entry.type].element))
               newElement.addClass(field_support[entry.type].fieldClass)
               newElement.attr('type', field_support[entry.type].type)
-              newElement.attr('ng-model', makeModel(attrs.ngModel, entry.key, entry.val))
-
-              if(entry.type == 'text' || entry.type == 'password' || entry.type == 'number')
-                if angular.isDefined(entry.val)
-                  setProperty(model, entry.key, entry.val, true)
-                else if entry.required
-                  setProperty(model, entry.key, '', false)
-                else
-                  setProperty(model, entry.key, undefined, false)
+              newElement.attr('ng-model', makeModel(attrs.ngModel, entry.key))
 
               groupElement.append(makeFieldContainer(newElement, entry))
               groupElement.append(makeHelperTag(entry))
-              groupElement.append(makeRemoveTag(id))
+
+              if entry.required
+                groupElement.append(makeRequiredTag(id))
+              else
+                groupElement.append(makeRemoveTag(id))
 
               return groupElement;
 
@@ -275,14 +282,8 @@
           # Checks the entry to see if entry is ethier required or has a value that exists
           #################################################################################
           isVisableField = (entry)->
-            if(entry.required == false && !angular.isDefined(entry.val))
+            unless angular.isDefined(entry.required) || angular.isDefined(entry.val)
               return false;
-
-            #Check to see if object class is even needed to be displayed
-            if(entry.key == 'objectClass' && !angular.isDefined(entry.val))
-              objFilter = $filter('filter')(template, {key: 'objectClass'})
-              for i in [0 ... objFilter.length-1] by 1
-                return false if angular.isDefined(objFilter[i].val)
 
             return true;
 
@@ -325,14 +326,11 @@
           # Switches a form field between two lists. Then removes the data from the model.
           #################################################################################
           swapFields = (target,destination, index)->
+            
             destination[index] = target[index]
 
             if angular.isDefined(model[target[index].key])
-              model[target[index].key][target[index].val] = ''
-
-            if(angular.isDefined(model['new']) && angular.isDefined(model['new'][target[index].key]))
-              model['new'][target[index].key] = ''
-              delete model['new'][target[index].key] unless target[index].required
+                model[target[index].key] = ''
 
             delete target[index]
 

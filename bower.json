@@ -7,7 +7,7 @@
       "angular-ui-router": "latest",
       "angular-animate": "latest",
       "angular-ui-router.stateHelper": "latest",
-      "bootstrap-sass-official": "latest",
+      "bootstrap-sass-official": "latest"
     }
   },
   "vendor": {

@@ -1,48 +1,61 @@
 ldapManager = angular.module('ldapManager')
 
-ldapManager.controller 'GroupIndexCtrl', ['$scope', 'Group', ($scope, Group)->
+ldapManager.controller 'GroupIndexCtrl', ['$scope', 'Notice', 'Crud', ($scope, Notice, Crud)->
   $scope.init = ()->
-    @groupServices = new Group()
+    @crudService = new Crud()
+    $scope.notice = Notice.GetMessage()
     $scope.entryCN= 'Group Name'
     $scope.entryIdName = 'GID'
-    $scope.entryList = @groupServices.all()
-  
+    $scope.entryList = @crudService.all()
+
   $scope.ensureEntryId = (entry)->
     return entry.attributes.gidNumber
 
 ]
 
-ldapManager.controller 'GroupNewCtrl', ['$scope', 'Group', ($scope, Group)->
-  $scope.showData = 'Hello World: NewCtrl'
-]
-
-ldapManager.controller 'GroupEditCtrl', ['$scope', '$stateParams','Group', ($scope, $stateParams, Group)->
-  $scope.requestUrl = '/api/request/group/' + $stateParams.id
+ldapManager.controller 'GroupNewCtrl', ['$scope', 'Notice','Crud', ($scope, Notice, Crud)->
   $scope.ldapForm = {}
 
   $scope.init = () ->
-    @groupServices = new Group($stateParams.id)
-    $scope.entryData = @groupServices.getGroup()
-
+    Notice.init()
+    @crudService = new Crud()
+    $scope.requestUrl = '/api/request/group/'
 
   $scope.submit = ()->
-    @groupServices.update($stateParams.id, $scope.ldapForm)
+    @crudService.create($scope.ldapForm)
 
 ]
 
-ldapManager.controller 'GroupShowCtrl', ['$scope', '$state', '$stateParams', 'User', ($scope, $state, $stateParams, Group)->
-  $scope.init = ()->
-    @groupServices = new User($stateParams.id)
-    $scope.entryData = @groupServices.getGroup()
-    $scope.currentState = $state.current
+ldapManager.controller 'GroupEditCtrl', ['$scope', '$stateParams', 'Notice', 'Crud',
+  ($scope, $stateParams, Notice, Crud)->
+    $scope.ldapForm = {}
 
-  $scope.ensureArray = (value)->
-    return value if angular.isArray(value)
-    return [value]
+    $scope.init = () ->
+      Notice.init()
+      @crudService = new Crud($stateParams.id)
+      $scope.requestUrl = '/api/request/group/' + $stateParams.id
+      $scope.entryData = @crudService.get()
+
+    $scope.submit = ()->
+      @crudService.update($stateParams.id, $scope.ldapForm)
 
 ]
 
-ldapManager.controller 'GroupDestroyCtrl', ['$scope', '$stateParams','Group', ($scope, $stateParams, Group)->
-  @groupServices = new Group($stateParams.id)
-  @groupServices.delete($stateParams.id)
+ldapManager.controller 'GroupShowCtrl', ['$scope', '$stateParams', 'Notice', 'Crud',
+  ($scope, $stateParams, Notice, Crud)->
+    $scope.init = ()->
+      @crudService = new Crud($stateParams.id)
+      $scope.entryData = @crudService.get()
+      $scope.notice = Notice.GetMessage()
+
+    $scope.ensureArray = (value)->
+      return value if angular.isArray(value)
+      return [value]
+
+]
+
+ldapManager.controller 'GroupDestroyCtrl', ['$scope', '$stateParams','Crud',
+  ($scope, $stateParams, Crud)->
+    @crudService = new Crud($stateParams.id)
+    @crudService.delete($stateParams.id)
 ]

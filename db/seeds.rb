@@ -88,6 +88,11 @@ query_insert_names = [
         :description => 'Contains general information like: location, telephone, and other identifying information. ' +
             'This is found in most UNIX /etc/passwd files.'
     },
+    {
+        :title => 'Street Address',
+        :keyattribute => 'street',
+        :description => 'Street address of the given entry.'
+    }
 ]
 puts query_insert_names
 
@@ -168,6 +173,14 @@ query_insert_user= [
     },
     {
         :attribute_name_id => AttributeName.find_by_keyattribute('homeDirectory').id,
+        :field_type => 'text'
+    },
+    {
+        :attribute_name_id => AttributeName.find_by_keyattribute('displayName').id,
+        :field_type => 'text'
+    },
+    {
+        :attribute_name_id => AttributeName.find_by_keyattribute('street').id,
         :field_type => 'text'
     }
 ]

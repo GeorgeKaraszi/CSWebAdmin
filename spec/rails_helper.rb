@@ -16,8 +16,8 @@ RSpec.configure do |config|
   #config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   config.include Warden::Test::Helpers
-  config.include Devise::TestHelpers, :type => :controller
-  config.extend ControllerMacros, :type => :controller
+  config.include Devise::TestHelpers, :type => :controllers
+  config.extend ControllerMacros, :type => :controllers
   config.include FactoryGirl::Syntax::Methods
 
   config.before(:suite) do

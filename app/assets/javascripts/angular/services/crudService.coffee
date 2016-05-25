@@ -7,7 +7,7 @@ ldapManager.factory 'Crud', ['$resource', '$http', '$state', 'Notice',
         
         #Obtain the parent (EX: ldap_users.show = ldap_users)
         controllerPath = $state.current.name.split('.')[0]
-        console.log(controllerPath)
+#        console.log(controllerPath)
 
         if(angular.isDefined(id))
           @service = $resource('/api/'+ controllerPath + '/:id',
@@ -24,7 +24,7 @@ ldapManager.factory 'Crud', ['$resource', '$http', '$state', 'Notice',
       create: (attrs)->
         new @service(ldapData: attrs).$save (
           (sucessResults)->
-            console.log(sucessResults)
+#            console.log(sucessResults)
             Notice.SetMessage(sucessResults.notice, 1)
             $state.go('^.show', {id: sucessResults.id}, {reload: true})
         ),(rejectResults)->
@@ -48,7 +48,7 @@ ldapManager.factory 'Crud', ['$resource', '$http', '$state', 'Notice',
         new @service().$delete {id: id},
           (sucessResults)->
             Notice.SetMessage(sucessResults.notice, 1)
-            console.log(sucessResults)
+#            console.log(sucessResults)
             $state.go('^')
           ,(rejectResults)->
             Notice.SetMessage(rejectResults.notice, 1)

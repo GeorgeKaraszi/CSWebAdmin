@@ -20,7 +20,7 @@ RSpec.configure do |config|
   config.extend ControllerMacros, :type => :controllers
   config.include FactoryGirl::Syntax::Methods
 
-  config.before(:suite) do
+  config.before(:each) do
     if LdapUser.exists?('uid=rspecTester')
       user = LdapUser.find('uid=rspecTester')
       user.destroy

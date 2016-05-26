@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Request, type: :model do
 
-  describe "must_have" do
-    let(:user) {LdapUser.new!({:new => {:uid => 'rspecTester'}})}
+  describe ".must_have" do
+    let(:user) {FactoryGirl.create(:ldap_user)}
 
     context 'User entry' do
       subject {Request.must_have(user)}
@@ -19,6 +19,7 @@ RSpec.describe Request, type: :model do
             {key:'gidNumber', title:'Group ID', required:true, type: 'number',
              description: 'Default Group association. This will identify what group you belong to on a UNIX system'}
         ]
+
         expect(expected & subject).to eq(expected)
       end
 
@@ -26,8 +27,8 @@ RSpec.describe Request, type: :model do
     end
   end
 
-  describe 'may_have' do
-    let(:user) {LdapUser.new!({:new => {:uid => 'rspecTester'}})}
+  describe '.may_have' do
+    let(:user) {FactoryGirl.create(:ldap_user)}
 
     context 'User entry' do
       subject {Request.may_have(user)}

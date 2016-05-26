@@ -4,7 +4,7 @@ class Api::LdapGroupsController < ApplicationController
 
 # GET /ldap_groups.json
   def index
-    render json: LdapGroup.json_model(LdapGroup.all)
+    render json: LdapGroup.all!(LdapGroup.all), status: :ok
   end
 
 # GET /ldap_groups/1.json

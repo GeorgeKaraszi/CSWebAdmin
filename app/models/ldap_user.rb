@@ -3,6 +3,13 @@ class LdapUser < LdapBase
                :prefix  =>  'ou=People',
                :classes => ['inetOrgPerson', 'posixAccount']
 
+
+  def self.all!(entry_list)
+    entry_list.inject([]) do |arr, entry|
+      arr << {dn: "#{entry['dn']}", cn: entry.cn, idNum:entry['uidNumber']}
+      arr
+    end
+  end
   #
   # Creates the user with the necessary input required before being
   # allowing to add additional attributes

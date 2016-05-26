@@ -5,7 +5,7 @@ class Api::LdapUsersController < ApplicationController
 
   # GET /ldap_users.json
   def index
-    render json: LdapUser.json_model(LdapUser.all), status: :ok
+    render json: LdapUser.all!(LdapUser.all), status: :ok
   end
 
   # GET /ldap_users/1.json

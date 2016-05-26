@@ -27,7 +27,7 @@ gem 'angular-rails-templates'
 
 group :development, :test do
   gem 'byebug'
-  gem 'jasmine'
+  gem 'jasmine-rails'
   gem 'rspec-rails', '~> 3.4.2'
   gem 'capybara', '~> 2.7.1'
   gem 'factory_girl_rails', '~> 4.7'

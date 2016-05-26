@@ -3,6 +3,13 @@ class LdapGroup < LdapBase
                prefix: "ou=Groups"
 
 
+  def self.all!(entry_list)
+    entry_list.inject([]) do |arr, entry|
+      arr << {dn: "#{entry['dn']}", cn: entry.cn, idNum:entry['gidNumber']}
+      arr
+    end
+  end
+
 #
 # Creates the user with the necessary input required before being
 # allowing to add additional attributes

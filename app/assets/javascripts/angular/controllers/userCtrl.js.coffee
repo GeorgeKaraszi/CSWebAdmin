@@ -7,9 +7,9 @@ ldapManager.controller 'UserIndexCtrl', ['$scope', 'Notice', 'Crud', ($scope, No
     $scope.entryCN= 'UserName'
     $scope.entryIdName = 'UID'
     $scope.entryList = @crudService.all()
-
-  $scope.ensureEntryId = (entry)->
-    return entry.attributes.uidNumber
+    
+    $scope.testAll = ()->
+      $scope.entryList = @crudService.all()
 
 ]
 

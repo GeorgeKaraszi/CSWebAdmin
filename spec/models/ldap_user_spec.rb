@@ -58,6 +58,7 @@ RSpec.describe LdapUser, type: :model do
   end
 
   describe 'create new entry' do
+    let(:user_att) {FactoryGirl.attributes_for(:ldap_user)}
 
     context 'no attributes provided' do
       user = LdapUser.new
@@ -89,57 +90,70 @@ RSpec.describe LdapUser, type: :model do
           expect(user.errors.messages.any? { |e| e[0] == :sn }).to be(true)
         end
       end
-
-
-      # it "returns an array of errors that 'must' be met" do
-      #   expect(user.must).to_not be(nil)
-      #   expect(user.must.is_a?(Array)).to be(true)
-      #   expect(user.must.length).to be >(1)
-      # end
-
-      # it 'should contain an error that uid was not provided' do
-      #   expect(user.must.any? { |e| e.name == 'uid' }).to be(true)
-      # end
-      #
-
     end
 
     context 'attributes are provided' do
-      user = LdapUser.new!(FactoryGirl.attributes_for(:ldap_user))
 
       it "returns successful save" do
-        expect(user.save!).to eq(true)
+        user = LdapUser.new_entry(user_att)
+        expect(user.save(user_att)).to eq(true)
       end
     end
   end
 
   describe 'Editing user' do
-    let (:good)  {{'new' => {:loginShell => '/bin/sh'}}}
-    let (:bad)  {{'new' => {:badAttribute => 'nada'}}}
+    let(:user)  {FactoryGirl.create(:ldap_user)}
+    let (:good)  {{:loginShell =>  "/bin/sh"}}
+    let (:bad)  {{badAttribute: 'nada'}}
 
     context 'valid attributes being added' do
       it "does not contain 'loginShell' attribute" do
-        user = LdapUser.find('uid=rspecTester')
         expect(user.attributes['loginShell']).to be(nil)
       end
 
       it "successfully added 'loginShell' attribute" do
-        user = LdapUser.find('uid=rspecTester')
         expect(user.save(good)).to be(true)
-      end
-
-      it "contains the attribute 'loginShell'" do
-        user = LdapUser.find('uid=rspecTester')
-        expect(user.attributes['loginShell']).to_not be(nil)
+        expect(user['loginShell']).to eq(good[:loginShell])
       end
     end
 
     context 'invalid attribute being added' do
       it "throws an error for adding invalid attributes" do
-        user = LdapUser.find('uid=rspecTester')
         expect(user.save(bad)).to be(false)
       end
     end
+  end
+
+  describe '.objects_to_remove' do
+    let(:user) {FactoryGirl.create(:ldap_user)}
+    subject(:input_params) {['posixAccount']}
+    subject(:empty_params) {['inetOrgPerson','posixAccount']}
+
+    it 'returns an array of objects that should be removed from the entry' do
+      expected = ['inetOrgPerson']
+      expect(user.objects_to_remove(input_params)).to eq(expected)
+    end
+
+    it 'returns an empty array' do
+      expect(user.objects_to_remove(empty_params)).to be_empty
+    end
+
+  end
+
+  describe '.objects_to_add' do
+    let(:user) {FactoryGirl.create(:ldap_user)}
+    subject(:input_params) {['inetOrgPerson','shadowAccount','posixAccount']}
+    subject(:empty_params) {['inetOrgPerson','posixAccount']}
+
+    it 'returns an array of objects that should be added to the entry' do
+      expected = ['shadowAccount']
+      expect(user.objects_to_add(input_params)).to eq(expected)
+    end
+
+    it 'returns an empty array' do
+      expect(user.objects_to_add(empty_params)).to be_empty
+    end
+
   end
 
   end

@@ -1,5 +1,5 @@
 FactoryGirl.define do
   factory :user do
-    login 'testuser'
+    login 'RSPECUSER'
   end
 end

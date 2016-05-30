@@ -14,26 +14,24 @@ class LdapBase < ActiveLdap::Base
     end
   end
 
-  #
+
   # Processes all parameters that have been submitted and checks to see if any
   # additions or changes have been made to the LDAP record
-  ###################################################################################
+  ##################################################################################
   def save(hash_params)
 
-    hash_params.each do |key, value|
-      case key
-        when 'new'
-          value.each do |key, value|
-            attribute_update(key, value, value) unless value.blank?
-          end
-        else
-          value.each do |original, modified|
-            attribute_update(key, original, modified) if original != modified
-          end
-      end
-    end
-    self.save!
+    if hash_params['objectClass']
+      submitted_object = hash_params['objectClass'].delete(' ').split(',')
+      remove_objects = objects_to_remove(submitted_object)
+      add_objects = objects_to_add(submitted_object)
+      hash_params.delete('objectClass')
 
+      remove_objects.each {|o| self.remove_class(o) }
+      add_objects.each {|o| self.add_class(o) }
+    end
+
+    hash_params.each {|key, value| self[key] = value }
+    self.save!
   rescue => e
     false
   end
@@ -49,8 +47,22 @@ class LdapBase < ActiveLdap::Base
     msg
   end
 
-  private
 
+  def objects_to_remove(submitted_objects)
+    self_objects = self.attributes['objectClass']
+    related_objects =  self_objects & submitted_objects
+
+    self_objects.select {|o| !related_objects.include?(o)}
+  end
+
+  def objects_to_add(submitted_objects)
+    self_objects = self.attributes['objectClass']
+    related_objects =  self_objects & submitted_objects
+
+    submitted_objects.select {|o| !related_objects.include?(o)}
+  end
+
+  private
   #
   # Performs the actual ldap modification
   ###################################################################################

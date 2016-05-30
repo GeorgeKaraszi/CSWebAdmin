@@ -4,19 +4,17 @@ ldapManager.factory 'Notice', ['$rootScope', ($rootScope)->
   return{
     init: ()->
       $rootScope.noticeSys = {displayed: 0, message: '', msg_type: ''}
-      return true
+      return this
 
     GetMessage: ()->
-
       if angular.isDefined($rootScope.noticeSys)
-        if $rootScope.noticeSys.displayed < 2
-          $rootScope.noticeSys.displayed += 1 #UI -ROUTE error crappy fix. Controller is called twice.
+#        if $rootScope.noticeSys.displayed < 2
+#          $rootScope.noticeSys.displayed += 1 #UI -ROUTE error crappy fix. Controller is called twice.
           return $rootScope.noticeSys.message;
 
       return undefined
 
     SetMessage: (message, msg_type)->
-
       #temporary soultion, this will be exapaned to become more formatted later on
       if angular.isArray(message)
         $rootScope.noticeSys = {displayed: false, message: message[0], msg_type: msg_type}

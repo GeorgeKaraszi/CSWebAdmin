@@ -16,9 +16,9 @@ RSpec.configure do |config|
   #config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   config.include Warden::Test::Helpers
-  config.include Devise::TestHelpers, :type => :controllers
-  config.extend ControllerMacros, :type => :controllers
+  config.include Devise::TestHelpers, type: :controller
   config.include FactoryGirl::Syntax::Methods
+  config.extend ControllerMacros, type: :controller
 
   config.before(:each) do
     if LdapUser.exists?('uid=rspecTester')
@@ -46,14 +46,10 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
+  config.infer_base_class_for_anonymous_controllers = false
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
-end
-
-def std_login
-  user = FactoryGirl.create(:user)
-  login_as(user, :scope=>user)
 end

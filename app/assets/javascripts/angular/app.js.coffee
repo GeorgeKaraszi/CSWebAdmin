@@ -15,6 +15,7 @@ ldapManager.config(['$stateProvider', '$urlRouterProvider', '$locationProvider',
       .state('ldap_groups.edit', { url: '/:id/edit', templateUrl: 'entry/edit.html', controller: 'GroupEditCtrl'})
       .state('ldap_groups.new', { url: '/new', templateUrl: 'entry/new.html', controller: 'GroupNewCtrl'})
       .state('ldap_groups.destroy', {url: '/:id/destroy', controller: 'GroupDestroyCtrl'})
+
     $locationProvider.html5Mode(true)
 ])
 

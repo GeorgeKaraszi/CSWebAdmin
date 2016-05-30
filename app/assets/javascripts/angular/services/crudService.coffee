@@ -27,7 +27,7 @@ ldapManager.factory 'Crud', ['$resource', '$http', '$state', 'Notice',
         new @service(ldapData: attrs).$save {},
           (sucessResults)->
             Notice.SetMessage(sucessResults.notice, 1)
-            $state.go('^.show', {id: sucessResults.id}, {reload: true})
+            $state.go('^.show', {id: sucessResults.id})
 
         , (rejectResults)->
           Notice.SetMessage(rejectResults.data.notice, 1)
@@ -38,7 +38,7 @@ ldapManager.factory 'Crud', ['$resource', '$http', '$state', 'Notice',
         new @service(ldapData: attrs).$update {},
           (sucessResults)->
             Notice.SetMessage(sucessResults.notice, 1)
-            $state.go('^.show', {id: sucessResults.id}, {reload: true})
+            $state.go('^.show', {id: sucessResults.id})
 
         , (rejectResults)->
           Notice.SetMessage(rejectResults.data.notice, 1)

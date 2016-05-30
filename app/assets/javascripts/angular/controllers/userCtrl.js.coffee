@@ -18,9 +18,9 @@ ldapManager.controller 'UserNewCtrl', ['$scope', 'Notice','Crud', ($scope, Notic
   $scope.submit = ()->
     Crud.create($scope.ldapForm)
 
-    $scope.$watch('service.GetMessage()', (newMessage)->
-      $scope.notice = newMessage
-    )
+  $scope.$watch('service.GetMessage()', (newMessage)->
+    $scope.notice = newMessage
+  )
   
 ]
 
@@ -45,12 +45,16 @@ ldapManager.controller 'UserEditCtrl', ['$scope', '$stateParams', 'Notice', 'Cru
 ldapManager.controller 'UserShowCtrl', ['$scope', '$stateParams', 'Notice', 'Crud',
   ($scope, $stateParams, Notice, Crud)->
     $scope.init = ()->
+      $scope.service = Notice
       $scope.entryData = Crud.get($stateParams.id)
-      $scope.notice = Notice.GetMessage()
 
     $scope.ensureArray = (value)->
       return value if angular.isArray(value)
       return [value]
+
+    $scope.$watch('service.GetMessage()', (newMessage)->
+      $scope.notice = newMessage
+    )
   
 ]
 

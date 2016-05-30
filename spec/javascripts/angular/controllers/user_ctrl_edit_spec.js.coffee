@@ -77,7 +77,7 @@ describe('userCtrlEdit', ()->
 
     it('should have called new $state', ()->
       expect($state.go).toHaveBeenCalled()
-      expect($state.go).toHaveBeenCalledWith('^.show', {id: id}, {reload: true})
+      expect($state.go).toHaveBeenCalledWith('^.show', {id: id})
     )
 
     it('state.current.url should be /:id/show', ()->

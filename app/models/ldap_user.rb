@@ -24,7 +24,7 @@ class LdapUser < LdapBase
       end
     end
 
-      LdapUser.new(hash_params[:uid]) unless hash_params[:uid].nil?
+    LdapUser.new(hash_params[:uid]) unless hash_params[:uid].nil?
 
   end
 

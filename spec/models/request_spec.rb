@@ -6,7 +6,7 @@ RSpec.describe Request, type: :model do
     let(:user) {FactoryGirl.create(:ldap_user)}
 
     context 'User entry' do
-      subject {Request.must_have(user)}
+      subject {Request.must_have(user, user.must)}
 
       it 'returns hash array containing required elements' do
         expected = [
@@ -31,7 +31,7 @@ RSpec.describe Request, type: :model do
     let(:user) {FactoryGirl.create(:ldap_user)}
 
     context 'User entry' do
-      subject {Request.may_have(user)}
+      subject {Request.may_have(user, user.may)}
 
       it 'returns a list of optional elements' do
         expected = [
@@ -72,6 +72,71 @@ RSpec.describe Request, type: :model do
 
     end
 
+  end
+
+  describe '.object_query' do
+    let(:user) {FactoryGirl.create(:ldap_user)}
+
+    context 'User entry' do
+      subject (:alias_request) {Request.object_query(user, 'alias')}
+      subject (:bad_request) {Request.object_query(user, 'BadObjectClass')}
+
+      it 'returns a list of attributes that must be met' do
+        expected = {key: 'aliasedObjectName', title: 'aliasedEntryName', required:true,  type: 'text',
+             description:'RFC4512: name of aliased object'}
+
+        expect(alias_request).to include(expected)
+      end
+
+      it 'returns nil if no object class exists' do
+        expect(bad_request).to be(nil)
+      end
+    end
+
+  end
+
+  describe '.object_list_query' do
+    let(:user) {FactoryGirl.create(:ldap_user)}
+    let(:objectClasses) {['inetOrgPerson', 'posixAccount', 'alias']}
+
+    context 'User entry' do
+      subject {Request.object_list_query(user, objectClasses)}
+      it 'returns all attributes for current and added attributes' do
+        expected = [
+            {key: 'aliasedObjectName', title: 'aliasedEntryName', required:true,  type: 'text',
+             description:'RFC4512: name of aliased object'},
+            {key: "sn", title: "Last Name", required:true,  type: "text",
+             description: "Last Name"},
+            {key:'cn', title: 'Common Name', required:true, type: 'text',
+             description:'This refers to the individual object'}
+        ]
+
+        expect(expected & subject).to eq(expected)
+      end
+    end
+  end
+
+  describe '.object_attribute_map' do
+    let(:user) {FactoryGirl.create(:ldap_user)}
+    let(:objectClasses) {['inetOrgPerson', 'posixAccount', 'alias']}
+
+    context 'User entry' do
+      subject {Request.object_attribute_map(user, objectClasses)}
+      it 'returns all attributes for current and added attributes' do
+        expected = [
+            {title: 'Object Class', key: 'objectClass', type: 'text', val: objectClasses.join(','), required: true,
+             description:'Hierarchical LDAP Schema. This will determine what attributes are available to use.'},
+            {key: 'aliasedObjectName', title: 'aliasedEntryName', required:true,  type: 'text',
+             description:'RFC4512: name of aliased object'},
+            {key: "sn", title: "Last Name", required:true,  type: 'text', val:'Bad Old Boy',
+             description: "Last Name"},
+            {key:'cn', title: 'Common Name', required:true, type: 'text', val:'rspecTester',
+             description:'This refers to the individual object'}
+        ]
+
+        expect(expected & subject).to eq(expected)
+      end
+    end
   end
 
 end

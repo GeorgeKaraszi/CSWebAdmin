@@ -37,6 +37,9 @@ class LdapBase < ActiveLdap::Base
   end
 
 
+  #
+  # Processes the error message into a string array
+  ##################################################################################
   def error_message
     msg = []
     self.errors.messages.each do |k,v|
@@ -48,6 +51,22 @@ class LdapBase < ActiveLdap::Base
   end
 
 
+  def object_must_attributes(objectClass)
+    must = objectClass
+  end
+
+  #
+  # Returns an array of attributes that must be met for the objectClass
+  ##################################################################################
+  def object_class_must_lookup(name)
+    object_class = self.schema.object_class(name)
+    object_class.must unless object_class.id.nil?
+  end
+
+
+  #
+  # Returns a list of attributes that must be removed before saving entry
+  ##################################################################################
   def objects_to_remove(submitted_objects)
     self_objects = self.attributes['objectClass']
     related_objects =  self_objects & submitted_objects
@@ -55,6 +74,9 @@ class LdapBase < ActiveLdap::Base
     self_objects.select {|o| !related_objects.include?(o)}
   end
 
+  #
+  # Returns a list of attributes that must be added before saving entry
+  ##################################################################################
   def objects_to_add(submitted_objects)
     self_objects = self.attributes['objectClass']
     related_objects =  self_objects & submitted_objects

@@ -156,4 +156,26 @@ RSpec.describe LdapUser, type: :model do
 
   end
 
+
+  describe '.object_must_lookup' do
+    let (:user) {FactoryGirl.create(:ldap_user)}
+    subject(:object_query) {user.object_class_must_lookup('shadowAccount')}
+
+    it 'successfully finds the object class' do
+      expect(object_query).to_not be(nil)
+    end
+
+    it 'returns an array of attributes that must be met' do
+      expect(object_query.is_a?(Array)).to be(true)
+    end
+
+    it 'contains key names for each attribute' do
+      object_query.each {|a| expect(a.name).to_not be(nil)}
+    end
+
+    it 'returns nil if object does not exists' do
+      expect(user.object_class_must_lookup('BadObjectClass')).to be(nil)
+    end
+
   end
+end

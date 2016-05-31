@@ -97,11 +97,12 @@
         $scope.inactive_fields = {}
         $scope.selectedField = {}
 
-        if(!angular.isDefined(attrs.ngModel) || !angular.isDefined(attrs.templateUrl))
-          console.log('Error: Require ng-model and template-url properties')
+        if(!angular.isDefined(attrs.ngModel) || !angular.isDefined(attrs.templateUrl) || !angular.isDefined(attrs.objectUrl))
+          console.log('Error: Require ng-model, template-url and object-url properties')
           return false
 
         templateUrl = $parse(attrs.templateUrl)($scope)
+        objectUrl = $parse(attrs.objectUrl)($scope)
         model = $parse(attrs.ngModel)($scope)
 
 
@@ -361,6 +362,41 @@
 
               swapFields($scope.inactive_fields, $scope.active_fields, index)
               rebuildForm($scope.active_fields, $scope.inactive_fields)
+
+          #
+          # Action: Click event
+          #
+          # Add's an object class to the form and calls the request API to gather
+          # require information. Then rebuilds the form with the new required attributes
+          #################################################################################
+          $scope.addObjectClass = ()->
+#            index = $scope.selectedObjectModel.model
+            url = (objectUrl + model['objectClass'])
+
+            $http.get(url).then(
+              (successData)->
+                data = successData.data
+                id = $scope.active_fields.length + $scope.inactive_fields.length + 1
+
+                for i in [0 ... data.length] by 1
+                  matchingIndex = undefined
+
+                  #simply update the model since the object is responsisble for this action
+                  if data[i].key == 'objectClass'
+                    model['objectClass'] = data[i].val
+                  else
+                    #Search for already matching fields
+                    angular.forEach($scope.active_fields, (field)->
+                      matchingIndex = field if field.key == data[i].key
+                    )
+                  #ignore matching fields, since we do not want to erase possible modified field data
+                  unless angular.isDefined(matchingIndex)
+                    htmlElement = formBuilder(data[i], id)
+                    showFields(data[i], id, htmlElement)
+
+                rebuildForm($scope.active_fields, $scope.inactive_fields)
+            )
+
 
           #
           # (Start) ->

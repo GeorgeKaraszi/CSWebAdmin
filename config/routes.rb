@@ -12,10 +12,16 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     scope '/request' do
-      get '/user/:id'  => 'requests#ldap_user'
-      get '/group/:id' => 'requests#ldap_group'
-      get '/user/'     => 'requests#ldap_user'
-      get '/group/'    => 'requests#ldap_group'
+      scope '/user' do
+        get '/'     => 'requests#ldap_user'
+        get '/:id'  => 'requests#ldap_user'
+        get '/:id/obj/:obj' => 'requests#ldap_user_object'
+      end
+      scope '/group' do
+        get '/'     => 'requests#ldap_group'
+        get '/:id'  => 'requests#ldap_group'
+        get '/:id/obj/:obj' => 'requests#ldap_group_object'
+      end
     end
 
 

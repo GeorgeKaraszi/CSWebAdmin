@@ -1,4 +1,4 @@
-@app = angular.module('formBuilder', ['ngResource'])
+@app = angular.module('formBuilder', ['ngResource', 'ngTagsInput'])
 
 @app.directive 'dynamicForm', ['$q', '$http', '$document', '$parse', '$templateCache', '$compile', '$filter',
   ($q, $http, $document, $parse, $templateCache, $compile, $filter) ->
@@ -96,6 +96,7 @@
         $scope.active_fields = {}
         $scope.inactive_fields = {}
         $scope.selectedField = {}
+        $scope.objectFields = []
 
         if(!angular.isDefined(attrs.ngModel) || !angular.isDefined(attrs.templateUrl) || !angular.isDefined(attrs.objectUrl))
           console.log('Error: Require ng-model, template-url and object-url properties')
@@ -164,6 +165,28 @@
             return newHelpTag;
 
           #
+          # Creates object class taps that are displayed on the form
+          #################################################################################
+          makeObjectTags = (entry)->
+
+            $scope.objectFields = entry.val.split(',')
+
+            newObjectTag = angular.element($document[0].createElement('tags-input'))
+            newObjectTag.attr('ng-model', 'objectFields')
+            newObjectTag.attr('paste-split-pattern', "[,]")
+            newObjectTag.attr('add-on-comma', 'true')
+            newObjectTag.attr('on-tag-added', "addObjectClass($tag)")
+            newObjectTag.attr('on-tag-removed', "removeObjectClass($tag)")
+
+#            $compile(newObjectTag)($scope)    #Compile new HTML build
+
+#            autocomplete = angular.element($document[0].createElement('auto-complete'))
+#            autocomplete.attr('source',  'some function with tags that will be accesptable')
+#            newObjectTag.append(autocomplete)
+
+            return newObjectTag
+
+          #
           # Creates a remove tag that is assigned with an ID number and click-event that
           # will remove the spawned field.
           #################################################################################
@@ -210,7 +233,7 @@
           # Creates a select feild that will display avaiable attributes stored in the
           # inactive_fields array
           #################################################################################
-          makeSelectField = (options, something)->
+          makeSelectField = (options)->
             newSelectParent = angular.element($document[0].createElement('div'))
             newSelectParent.addClass('col-sm-3')
 
@@ -227,11 +250,13 @@
           # Rebuilds the list that displays avaible fields
           #################################################################################
           makeInactiveList = (inactiveEntries)->
+            console.log(inactiveEntries)
+            console.log($scope.selectedField)
             newSelectContainer = angular.element($document[0].createElement('div'))
             newSelectContainer.addClass('form-group')
 
             newSelectContainer.append(makeAddTag())
-            newSelectContainer.append(makeSelectField(inactiveEntries, false))
+            newSelectContainer.append(makeSelectField(inactiveEntries))
 
             return newSelectContainer;
 
@@ -246,6 +271,8 @@
 
 
           #
+          # Core: Builds the HTML representation of each form field
+          #
           # Builds each field, depending on their speicification.
           # This is typically used in a for loop, itterating multible elements
           #################################################################################
@@ -256,6 +283,7 @@
               entry.model = id
               groupElement.append(makeLabel(entry))
 
+              #Set value to model that will send data back to the server
               if(entry.type == 'text' || entry.type == 'password' || entry.type == 'number')
                 if angular.isDefined(entry.val)
                   setProperty(model, entry.key, entry.val)
@@ -264,11 +292,14 @@
                 else
                   setProperty(model, entry.key, undefined)
 
-              newElement = angular.element($document[0].createElement(field_support[entry.type].element))
-              newElement.addClass(field_support[entry.type].fieldClass)
-              newElement.attr('type', field_support[entry.type].type)
-              newElement.attr('ng-model', makeModel(attrs.ngModel, entry.key))
-
+              #Create HTML elements to display on the page
+              if entry.key is 'objectClass'
+                newElement = makeObjectTags(entry)
+              else
+                newElement = angular.element($document[0].createElement(field_support[entry.type].element))
+                newElement.addClass(field_support[entry.type].fieldClass)
+                newElement.attr('type', field_support[entry.type].type)
+                newElement.attr('ng-model', makeModel(attrs.ngModel, entry.key))
               groupElement.append(makeFieldContainer(newElement, entry))
               groupElement.append(makeHelperTag(entry))
 
@@ -283,17 +314,18 @@
           # Checks the entry to see if entry is ethier required or has a value that exists
           #################################################################################
           isVisableField = (entry)->
-            unless angular.isDefined(entry.required) || angular.isDefined(entry.val)
-              return false;
+            if angular.isDefined(entry.val)
+              return true
+            if angular.isDefined(entry.required)
+              return entry.required
 
-            return true;
+            return false
 
           #
           # Adds entries to the list of display elements
           #################################################################################
           showFields = (entry, id, htmlElement)->
             entry.htmlElement = htmlElement
-
             $scope.active_fields[id] = entry
 
 
@@ -313,7 +345,7 @@
             newBody = angular.element($document[0].createElement('div'))
 
             angular.forEach(activeEntries, (entry)->
-              newBody.append(entry.htmlElement)
+                newBody.append(entry.htmlElement)
             )
 
             newBody.append(makeInactiveList(inactiveEntries))
@@ -363,36 +395,76 @@
               swapFields($scope.inactive_fields, $scope.active_fields, index)
               rebuildForm($scope.active_fields, $scope.inactive_fields)
 
+
+          #
+          # Action: Click event
+          #
+          # Remove's an object class to the form and calls the request API to gather
+          # require information. Then rebuilds the form with the new required attributes
+          #################################################################################
+          $scope.removeObjectClass = (key)->
+            unless model['objectClass'].length is 0
+              objectModel = model['objectClass'].split(',')
+              indexModel = objectModel.indexOf(key.text)
+              objectModel.splice(indexModel, 1)
+              model['objectClass'] = objectModel.join()
+              $scope.updateObjectDisplay()
+
           #
           # Action: Click event
           #
           # Add's an object class to the form and calls the request API to gather
           # require information. Then rebuilds the form with the new required attributes
           #################################################################################
-          $scope.addObjectClass = ()->
-#            index = $scope.selectedObjectModel.model
+          $scope.addObjectClass = (key)->
+            unless key is `undefined`
+              objectClasses = model['objectClass'].split(',')
+              objectClasses.push(key.text)
+              model['objectClass'] = objectClasses.join(',')
+              $scope.updateObjectDisplay()
+
+
+          #
+          # Updates the display of required attriutes after a change in object classes occur
+          #################################################################################
+          $scope.updateObjectDisplay = ()->
             url = (objectUrl + model['objectClass'])
+
+
 
             $http.get(url).then(
               (successData)->
                 data = successData.data
-                id = $scope.active_fields.length + $scope.inactive_fields.length + 1
+                field_list = []
 
-                for i in [0 ... data.length] by 1
-                  matchingIndex = undefined
+                angular.extend(field_list, $scope.active_fields, $scope.inactive_fields)
+                for y in [0 ... $scope.active_fields.length] by 1
+                  delete $scope.active_fields[y]
 
-                  #simply update the model since the object is responsisble for this action
-                  if data[i].key == 'objectClass'
-                    model['objectClass'] = data[i].val
+                for j in [0 ... $scope.inactive_fields.length] by 1
+                  delete $scope.inactive_fields[j]
+
+                for i in [0 ... field_list.length] by 1
+                  required_object = undefined
+                  angular.forEach(data, (entry)->
+                    required_object = entry if field_list[i].key == entry.key
+                  )
+
+                  if angular.isDefined(required_object) is true
+                    data.splice(required_object, 1)
+                    field_list[i] = required_object
                   else
-                    #Search for already matching fields
-                    angular.forEach($scope.active_fields, (field)->
-                      matchingIndex = field if field.key == data[i].key
-                    )
-                  #ignore matching fields, since we do not want to erase possible modified field data
-                  unless angular.isDefined(matchingIndex)
-                    htmlElement = formBuilder(data[i], id)
-                    showFields(data[i], id, htmlElement)
+                    field_list[i].required = false
+
+
+                angular.extend(field_list, field_list, data) unless data.length is 0
+
+                for x in [0 ... field_list.length] by 1
+                  htmlElement = formBuilder(field_list[x], x)
+                  if isVisableField(field_list[x])
+                    showFields(field_list[x], x, htmlElement)
+                  else
+                    hideFields(field_list[x],x, htmlElement)
 
                 rebuildForm($scope.active_fields, $scope.inactive_fields)
             )

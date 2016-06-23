@@ -96,7 +96,7 @@ class Request
       arr
     end
 
-    must.uniq! {|m| m[:key]} unless must.empty?
+    return must.uniq {|m| m[:key]} unless must.empty?
   end
 
   #

@@ -50,17 +50,26 @@ class LdapBase < ActiveLdap::Base
     msg
   end
 
-
-  def object_must_attributes(objectClass)
-    must = objectClass
-  end
-
   #
   # Returns an array of attributes that must be met for the objectClass
   ##################################################################################
   def object_class_must_lookup(name)
     object_class = self.schema.object_class(name)
     object_class.must unless object_class.id.nil?
+  end
+
+
+  #
+  # Returns an array of all possible object classes
+  ##################################################################################
+  def object_class_list
+    self.schema.object_classes.inject([]) do |arr, entry|
+      unless self.attributes['objectClass'].include?(entry.name)
+        arr << entry.name unless arr.include?(entry.name)
+      end
+
+      arr
+    end
   end
 
 

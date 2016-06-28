@@ -16,6 +16,7 @@ Rails.application.routes.draw do
         get '/'     => 'requests#ldap_user'
         get '/:id'  => 'requests#ldap_user'
         get '/:id/obj/:obj' => 'requests#ldap_user_object'
+        get '/:id/obj/' => 'requests#ldap_user_obj_list'
       end
       scope '/group' do
         get '/'     => 'requests#ldap_group'

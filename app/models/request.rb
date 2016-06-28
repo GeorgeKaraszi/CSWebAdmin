@@ -42,6 +42,20 @@ class Request
     request
   end
 
+
+  #
+  # Output:
+  # ['', '', ..., '']
+  #
+  #
+  # Returns an array of strings that contain information about possible object
+  # classes available
+  ###################################################################################
+  def self.object_class_list(entry)
+    return entry.object_class_list
+  end
+
+
   #
   # Output:
   #    [{:title, :description, :type, :key, :required, :val}, ...]

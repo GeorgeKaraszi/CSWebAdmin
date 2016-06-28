@@ -139,4 +139,30 @@ RSpec.describe Request, type: :model do
     end
   end
 
+
+  describe '.object_class_list' do
+    let(:user) {FactoryGirl.create(:ldap_user)}
+    let(:new_class) {['alias']}
+    let(:current_class) {['inetOrgPerson', 'posixAccount']}
+    subject (:object_list) {Request.object_class_list(user)}
+
+    it 'should return an array' do
+      expect(object_list.is_a?(Array)).to be(true)
+    end
+
+    it 'should contain all classes not active' do
+      expect(new_class & object_list).to eq(new_class)
+    end
+
+    it 'should not contain any class that the user has set' do
+      expect(current_class & object_list).to be_empty
+    end
+
+    it 'should contain more classes then basic' do
+      expect(object_list.length).to be > new_class.length
+    end
+
+
+  end
+
 end

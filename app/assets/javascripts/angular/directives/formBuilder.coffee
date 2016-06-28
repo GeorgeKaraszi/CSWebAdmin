@@ -169,22 +169,35 @@
           #################################################################################
           makeObjectTags = (entry)->
 
+            console.log(entry)
             $scope.objectFields = entry.val.split(',')
+            console.log($scope.objectFields)
 
+            #### Object class tag setup ####
             newObjectTag = angular.element($document[0].createElement('tags-input'))
             newObjectTag.attr('ng-model', 'objectFields')
             newObjectTag.attr('paste-split-pattern', "[,]")
-            newObjectTag.attr('add-on-comma', 'true')
             newObjectTag.attr('on-tag-added', "addObjectClass($tag)")
             newObjectTag.attr('on-tag-removed', "removeObjectClass($tag)")
 
-#            $compile(newObjectTag)($scope)    #Compile new HTML build
 
-#            autocomplete = angular.element($document[0].createElement('auto-complete'))
-#            autocomplete.attr('source',  'some function with tags that will be accesptable')
-#            newObjectTag.append(autocomplete)
+            #### Auto complete setup ####
+            autocomplete = angular.element($document[0].createElement('auto-complete'))
+            autocomplete.attr('source',  'autoComplete($query)')
+            autocomplete.attr('load-on-focus', "true")
+            autocomplete.attr('load-on-empty',"true")
+            autocomplete.attr('max-results-to-show',"32")
+            newObjectTag.append(autocomplete)
 
-            return newObjectTag
+            #### Formalize style ####
+            groupElement = angular.element($document[0].createElement('div'));
+            groupElement.addClass('form-group')
+            groupElement.append(makeLabel(entry))
+            groupElement.append(makeFieldContainer(newObjectTag, entry))
+            groupElement.append(makeHelperTag(entry))
+            groupElement.append(makeRequiredTag(entry.model))
+
+            return groupElement
 
           #
           # Creates a remove tag that is assigned with an ID number and click-event that
@@ -250,8 +263,6 @@
           # Rebuilds the list that displays avaible fields
           #################################################################################
           makeInactiveList = (inactiveEntries)->
-            console.log(inactiveEntries)
-            console.log($scope.selectedField)
             newSelectContainer = angular.element($document[0].createElement('div'))
             newSelectContainer.addClass('form-group')
 
@@ -281,7 +292,6 @@
             groupElement.addClass('form-group')
             if(angular.isDefined(field_support[entry.type]))
               entry.model = id
-              groupElement.append(makeLabel(entry))
 
               #Set value to model that will send data back to the server
               if(entry.type == 'text' || entry.type == 'password' || entry.type == 'number')
@@ -293,22 +303,24 @@
                   setProperty(model, entry.key, undefined)
 
               #Create HTML elements to display on the page
-              if entry.key is 'objectClass'
-                newElement = makeObjectTags(entry)
-              else
+              unless entry.key is 'objectClass'
+                groupElement.append(makeLabel(entry))
+
                 newElement = angular.element($document[0].createElement(field_support[entry.type].element))
                 newElement.addClass(field_support[entry.type].fieldClass)
                 newElement.attr('type', field_support[entry.type].type)
                 newElement.attr('ng-model', makeModel(attrs.ngModel, entry.key))
-              groupElement.append(makeFieldContainer(newElement, entry))
-              groupElement.append(makeHelperTag(entry))
+                groupElement.append(makeFieldContainer(newElement, entry))
+                groupElement.append(makeHelperTag(entry))
 
-              if entry.required
-                groupElement.append(makeRequiredTag(id))
-              else
-                groupElement.append(makeRemoveTag(id))
+                if entry.required
+                  groupElement.append(makeRequiredTag(id))
+                else
+                  groupElement.append(makeRemoveTag(id))
 
-              return groupElement;
+                return groupElement;
+
+              return undefined
 
           #
           # Checks the entry to see if entry is ethier required or has a value that exists
@@ -341,17 +353,19 @@
           #################################################################################
           rebuildForm = (activeEntries, inactiveEntries)->
             element.empty()               #Clear contents of the form
-
-            newBody = angular.element($document[0].createElement('div'))
+            inactiveList = makeInactiveList(inactiveEntries)
 
             angular.forEach(activeEntries, (entry)->
-                newBody.append(entry.htmlElement)
+
+              #Rebuild the Object class tag menu each form render
+              entry.htmlElement = makeObjectTags(entry) if entry.key is 'objectClass'
+
+              $compile(entry.htmlElement)($scope)
+              element.append(entry.htmlElement)
             )
 
-            newBody.append(makeInactiveList(inactiveEntries))
-
-            $compile(newBody)($scope)    #Compile new HTML build
-            element.append(newBody)      #Append to the form body
+            $compile(inactiveList)($scope)
+            element.append(inactiveList)
 
             return true;
 
@@ -423,32 +437,41 @@
               model['objectClass'] = objectClasses.join(',')
               $scope.updateObjectDisplay()
 
+          $scope.autoComplete = ($query)->
+            return $http.get(objectUrl)
+
 
           #
           # Updates the display of required attriutes after a change in object classes occur
           #################################################################################
           $scope.updateObjectDisplay = ()->
-            url = (objectUrl + model['objectClass'])
-
-
+            url = (objectUrl + '/' + model['objectClass'])
 
             $http.get(url).then(
               (successData)->
                 data = successData.data
                 field_list = []
 
+                #Gather all entries visiable on the form
                 angular.extend(field_list, $scope.active_fields, $scope.inactive_fields)
-                for y in [0 ... $scope.active_fields.length] by 1
-                  delete $scope.active_fields[y]
 
-                for j in [0 ... $scope.inactive_fields.length] by 1
-                  delete $scope.inactive_fields[j]
+                #Remove all visualbe entries from the active and inactive containers
+                angular.forEach($scope.active_fields, (entry)->
+                  delete $scope.active_fields[entry.model]
+                )
 
+                angular.forEach($scope.inactive_fields, (entry)->
+                  delete $scope.inactive_fields[entry.model]
+                )
+
+
+                #Reevaluate what's required and what's optional
                 for i in [0 ... field_list.length] by 1
                   required_object = undefined
                   angular.forEach(data, (entry)->
                     required_object = entry if field_list[i].key == entry.key
                   )
+
 
                   if angular.isDefined(required_object) is true
                     data.splice(required_object, 1)

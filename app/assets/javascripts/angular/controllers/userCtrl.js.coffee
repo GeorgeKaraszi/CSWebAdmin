@@ -32,7 +32,7 @@ ldapManager.controller 'UserEditCtrl', ['$scope', '$stateParams', 'Notice', 'Cru
     $scope.init = () ->
       $scope.service = Notice.init()
       $scope.requestUrl = '/api/request/user/' + $stateParams.id
-      $scope.requestObjUrl = $scope.requestUrl + '/obj/'
+      $scope.requestObjUrl = $scope.requestUrl + '/obj'
       $scope.entryData = Crud.get($stateParams.id)
 
     $scope.submit = ()->

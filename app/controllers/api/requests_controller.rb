@@ -1,6 +1,6 @@
 class Api::RequestsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_user, only: [:ldap_user, :ldap_user_object]
+  before_action :set_user, only: [:ldap_user, :ldap_user_object, :ldap_user_obj_list]
   before_action :set_group, only: [:ldap_group, :ldap_group_object]
 
 
@@ -29,6 +29,12 @@ class Api::RequestsController < ApplicationController
       render json: Request.object_attribute_map(@ldap_user, object_params)
     else
       render nothing: false
+    end
+  end
+
+  def ldap_user_obj_list
+    if @ldap_user
+      render json: Request.object_class_list(@ldap_user)
     end
   end
 

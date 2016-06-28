@@ -168,24 +168,25 @@
           # Creates object class taps that are displayed on the form
           #################################################################################
           makeObjectTags = (entry)->
-
-            console.log(entry)
             $scope.objectFields = entry.val.split(',')
-            console.log($scope.objectFields)
+
 
             #### Object class tag setup ####
             newObjectTag = angular.element($document[0].createElement('tags-input'))
             newObjectTag.attr('ng-model', 'objectFields')
             newObjectTag.attr('paste-split-pattern', "[,]")
+            newObjectTag.attr('placeholder', 'Add a Schema')
+            newObjectTag.attr('replace-spaces-with-dashes', 'false')
             newObjectTag.attr('on-tag-added', "addObjectClass($tag)")
             newObjectTag.attr('on-tag-removed', "removeObjectClass($tag)")
 
 
             #### Auto complete setup ####
             autocomplete = angular.element($document[0].createElement('auto-complete'))
-            autocomplete.attr('source',  'autoComplete($query)')
+            autocomplete.attr('source',  "autoComplete($query)")
             autocomplete.attr('load-on-focus', "true")
             autocomplete.attr('load-on-empty',"true")
+            autocomplete.attr('min-length', '0')
             autocomplete.attr('max-results-to-show',"32")
             newObjectTag.append(autocomplete)
 
@@ -359,7 +360,6 @@
 
               #Rebuild the Object class tag menu each form render
               entry.htmlElement = makeObjectTags(entry) if entry.key is 'objectClass'
-
               $compile(entry.htmlElement)($scope)
               element.append(entry.htmlElement)
             )
@@ -438,7 +438,12 @@
               $scope.updateObjectDisplay()
 
           $scope.autoComplete = ($query)->
-            return $http.get(objectUrl)
+            return $http.get(objectUrl, {cache: true}).then((response)->
+              objectClasses = response.data
+              return objectClasses.filter((objectClass)->
+                return objectClass.toLowerCase().indexOf($query.toLowerCase()) != -1
+              )
+            )
 
 
           #
@@ -480,7 +485,8 @@
                     field_list[i].required = false
 
 
-                angular.extend(field_list, field_list, data) unless data.length is 0
+                #Append any remaining data attributes to the field list
+                field_list = field_list.concat(data)
 
                 for x in [0 ... field_list.length] by 1
                   htmlElement = formBuilder(field_list[x], x)

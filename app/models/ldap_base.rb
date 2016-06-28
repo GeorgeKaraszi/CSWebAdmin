@@ -64,9 +64,9 @@ class LdapBase < ActiveLdap::Base
   ##################################################################################
   def object_class_list
     self.schema.object_classes.inject([]) do |arr, entry|
-      unless self.attributes['objectClass'].include?(entry.name)
+      #unless self.attributes['objectClass'].include?(entry.name)
         arr << entry.name unless arr.include?(entry.name)
-      end
+      #end
 
       arr
     end

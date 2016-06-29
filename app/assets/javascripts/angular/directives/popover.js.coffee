@@ -1,6 +1,6 @@
 @app = angular.module('formBuilder')
 
-@app.directive 'popover', [($compile)->
+@app.directive 'popover', ['$compile',($compile)->
   return {
     restrict: 'AE',
     template: '<span>{{label}}</span>',

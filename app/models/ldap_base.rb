@@ -14,31 +14,32 @@ class LdapBase < ActiveLdap::Base
     end
   end
 
-  #
+
   # Processes all parameters that have been submitted and checks to see if any
   # additions or changes have been made to the LDAP record
-  ###################################################################################
+  ##################################################################################
   def save(hash_params)
 
-    hash_params.each do |key, value|
-      case key
-        when 'new'
-          value.each do |key, value|
-            attribute_update(key, value, value) unless value.blank?
-          end
-        else
-          value.each do |original, modified|
-            attribute_update(key, original, modified) if original != modified
-          end
-      end
-    end
-    self.save!
+    if hash_params['objectClass']
+      submitted_object = hash_params['objectClass'].delete(' ').split(',')
+      remove_objects = objects_to_remove(submitted_object)
+      add_objects = objects_to_add(submitted_object)
+      hash_params.delete('objectClass')
 
+      remove_objects.each {|o| self.remove_class(o) }
+      add_objects.each {|o| self.add_class(o) }
+    end
+
+    hash_params.each {|key, value| self[key] = value }
+    self.save!
   rescue => e
     false
   end
 
 
+  #
+  # Processes the error message into a string array
+  ##################################################################################
   def error_message
     msg = []
     self.errors.messages.each do |k,v|
@@ -49,8 +50,50 @@ class LdapBase < ActiveLdap::Base
     msg
   end
 
-  private
+  #
+  # Returns an array of attributes that must be met for the objectClass
+  ##################################################################################
+  def object_class_must_lookup(name)
+    object_class = self.schema.object_class(name)
+    object_class.must unless object_class.id.nil?
+  end
 
+
+  #
+  # Returns an array of all possible object classes
+  ##################################################################################
+  def object_class_list
+    self.schema.object_classes.inject([]) do |arr, entry|
+      #unless self.attributes['objectClass'].include?(entry.name)
+        arr << entry.name unless arr.include?(entry.name)
+      #end
+
+      arr
+    end
+  end
+
+
+  #
+  # Returns a list of attributes that must be removed before saving entry
+  ##################################################################################
+  def objects_to_remove(submitted_objects)
+    self_objects = self.attributes['objectClass']
+    related_objects =  self_objects & submitted_objects
+
+    self_objects.select {|o| !related_objects.include?(o)}
+  end
+
+  #
+  # Returns a list of attributes that must be added before saving entry
+  ##################################################################################
+  def objects_to_add(submitted_objects)
+    self_objects = self.attributes['objectClass']
+    related_objects =  self_objects & submitted_objects
+
+    submitted_objects.select {|o| !related_objects.include?(o)}
+  end
+
+  private
   #
   # Performs the actual ldap modification
   ###################################################################################

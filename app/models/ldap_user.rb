@@ -4,26 +4,28 @@ class LdapUser < LdapBase
                :classes => ['inetOrgPerson', 'posixAccount']
 
   #
-  # Creates the user with the necessary input required before being
-  # allowing to add additional attributes
+  # Reruns a hash array of all the entries mapped out with essential identification
   ###################################################################################
-  def self.new_entry(hash_params)
-    new_params = hash_params['new']
-    return LdapUser.new(new_params['uid']) unless new_params['uid'].blank?
+  def self.all!(entry_list)
+    entry_list.inject([]) do |arr, entry|
+      arr << {dn: "#{entry['dn']}", cn: entry.cn, idNum:entry['uidNumber']}
+      arr
+    end
   end
 
   #
   # Creates the user with the necessary input required before being
   # allowing to add additional attributes
   ###################################################################################
-  def self.new!(hash_params)
-    unless hash_params[:new].nil?
-      unless hash_params[:new][:userPassword].nil?
-        hash_params[:new][:userPassword] = ActiveLdap::UserPassword.ssha(hash_params[:new][:userPassword])
+  def self.new_entry(hash_params)
+    if hash_params[:userPassword]
+      unless hash_params[:userPassword].include? '{SSHA}'
+        hash_params[:userPassword] = ActiveLdap::UserPassword.ssha(hash_params[:userPassword])
       end
     end
 
-    return LdapUser.new(hash_params[:new]) unless hash_params[:new].nil?
+    LdapUser.new(hash_params[:uid]) unless hash_params[:uid].nil?
+
   end
 
 end

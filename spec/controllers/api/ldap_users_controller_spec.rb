@@ -20,8 +20,8 @@ RSpec.describe Api::LdapUsersController, type: :controller do
         user_list = JSON.parse(response.body)
         expect(user_list.length).to be > (10)
         expect(user_list.all? {|e|e.has_key?('dn')}).to eq(true)
-        expect(user_list.all? {|e|e.has_key?('attributes')}).to eq(true)
-        expect(user_list.all? {|e| e['attributes'].has_key?('uid')}).to eq(true)
+        expect(user_list.all? {|e|e.has_key?('cn')}).to eq(true)
+        expect(user_list.all? {|e| e.has_key?('idNum')}).to eq(true)
       end
     end
   end
@@ -33,7 +33,7 @@ RSpec.describe Api::LdapUsersController, type: :controller do
 
     context "incorrect Posix objectClass attributes" do
       bad_user = FactoryGirl.attributes_for(:ldap_user)
-      bad_user[:new].delete(:homeDirectory)
+      bad_user.delete(:homeDirectory)
 
       it "returns an error if no homeDirectory is present" do
         post :create, :ldapData => bad_user
@@ -59,17 +59,17 @@ RSpec.describe Api::LdapUsersController, type: :controller do
   describe "Get 'show'" do
     login_user
 
-    let(:user) {'uid=rspecTester'}
+    let(:user) {FactoryGirl.create(:ldap_user)}
     let(:bad_user) {'uid=doesNotExist'}
 
     it 'returns a successful 200 response' do
-      get :show, :id => user
+      get :show, :id => user['dn']
       expect(response).to be_success
 
     end
 
     it 'returns data of a single user entry' do
-      get :show, :id => user
+      get :show, :id => user['dn']
       parsed_results = JSON.parse(response.body)
       expect(parsed_results['dn']).to_not be_nil
       expect(parsed_results['attributes']).to_not be_nil
@@ -88,17 +88,18 @@ RSpec.describe Api::LdapUsersController, type: :controller do
 
   describe "Delete 'destroy'" do
     login_user
-    let (:user) {'uid=rspecTester'}
+    let (:user) {FactoryGirl.create(:ldap_user)}
+    let(:bad_user) {'uid=doesNotExist'}
 
     it 'returns successful 200 response' do
-      delete :destroy, :id=> user, format: :json
+      delete :destroy, :id=> user['dn'], format: :json
       parsed_results = JSON.parse(response.body)
       expect(parsed_results['notice']).to eq('Ldap user was successfully deleted.')
       expect(response).to be_success
     end
 
     it 'returns error user not found' do
-      delete :destroy, :id=> user, format: :json
+      delete :destroy, :id=> bad_user, format: :json
       parsed_results = JSON.parse(response.body)
       expect(response).to have_http_status(:not_found)
       expect(parsed_results['notice']).to eq('Entry was not found')

@@ -4,8 +4,11 @@
   </small>
   <nav>
     <ul>
+      <% if Rails.env.development? %>
+        <li><%= link_to 'JSpecs', jasmine_rails_path, :target =>"_self"%></li>
+      <% end %>
       <li><%= link_to "About",   '#' %></li>
-      <li><%= link_to "Contact", contact_path %></li>
+      <li><%= link_to "Contact", contact_path, :target =>"_self" %></li>
       <% if user_signed_in? %>
            <li><%= link_to "Log out", '/logout', :method => :delete %></li>
       <% else %>

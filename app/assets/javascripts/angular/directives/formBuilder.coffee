@@ -107,7 +107,7 @@
         model = $parse(attrs.ngModel)($scope)
 
 
-        ($http.get(templateUrl, {cache: $templateCache}).then (results)->
+        ($http.get(templateUrl).then (results)->
             return results.data
         ).then (template)->
 

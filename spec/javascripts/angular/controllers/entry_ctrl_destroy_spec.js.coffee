@@ -1,4 +1,4 @@
-describe('userCtrlDestroy', ()->
+describe('entryCtrlDestroy', ()->
 
   beforeEach(module('ldapManager'))
 
@@ -44,7 +44,7 @@ describe('userCtrlDestroy', ()->
 
 
     #Initialize the controller to the new scope
-    $controller('UserDestroyCtrl', { $scope: $scope, Crud: Crud })
+    $controller('EntryDestroyCtrl', { $scope: $scope, Crud: Crud })
 
     $httpBackend.flush()
 
@@ -77,7 +77,7 @@ describe('userCtrlDestroy', ()->
 
     it('contains an error message', ()->
       $httpBackend.expect('DELETE','/api/ldap_users/' + id).respond(422, mockBadQueryResponse)
-      $controller('UserDestroyCtrl', { $scope: $scope, Crud: Crud })
+      $controller('EntryDestroyCtrl', { $scope: $scope, Crud: Crud })
       $httpBackend.flush()
       
       expect(Notice.GetMessage()).toEqual(mockBadQueryResponse.notice)

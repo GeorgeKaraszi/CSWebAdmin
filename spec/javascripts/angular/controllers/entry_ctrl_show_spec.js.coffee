@@ -1,4 +1,4 @@
-describe('userCtrlShow', ()->
+describe('entryCtrlShow', ()->
 
   beforeEach(module('ldapManager'))
 
@@ -31,13 +31,13 @@ describe('userCtrlShow', ()->
     stateParms.id = mockQueryResponse.dn
 
     #Initialize the controller to the new scope
-    controller('UserShowCtrl', { $scope: $scope, $stateParams: stateParms, Crud: Crud })
+    controller('EntryShowCtrl', { $scope: $scope, $stateParams: stateParms, Crud: Crud })
 
     #Monitor CRUD functions
     spyOn(Crud, 'get').and.callThrough();
 
     #Assign the given route state of the object(Used by Crud to assign API URLS)
-    $state.current = {controller:'UserShowCtrl', name:'ldap_users'}
+    $state.current = {controller:'EntryShowCtrl', name:'ldap_users'}
 
     #Setup mock HTTP backend response once called
     $httpBackend.when('GET','/api/ldap_users/'+ mockQueryResponse.dn).respond(data: mockQueryResponse)

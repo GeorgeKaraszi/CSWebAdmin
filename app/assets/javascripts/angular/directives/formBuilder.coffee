@@ -437,6 +437,11 @@
               model['objectClass'] = objectClasses.join(',')
               $scope.updateObjectDisplay()
 
+          #
+          # Action: Click/Focus event
+          #
+          # Lists a series of options aviable that can be added to the object class list
+          #################################################################################
           $scope.autoComplete = ($query)->
             return $http.get(objectUrl, {cache: true}).then((response)->
               objectClasses = response.data
@@ -452,9 +457,10 @@
           $scope.updateObjectDisplay = ()->
             url = (objectUrl + '/' + model['objectClass'])
 
+            console.log(url)
             $http.get(url).then(
-              (successData)->
-                data = successData.data
+              (response)->
+                data = response.data
                 field_list = []
 
                 #Gather all entries visiable on the form

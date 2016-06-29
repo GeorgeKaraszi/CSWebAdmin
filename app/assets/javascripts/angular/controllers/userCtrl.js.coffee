@@ -13,8 +13,8 @@ ldapManager.controller 'UserNewCtrl', ['$scope', 'Notice','Crud', ($scope, Notic
 
   $scope.init = () ->
     $scope.service = Notice.init()
-    $scope.requestUrl = '/api/request/user/'
-    $scope.requestObjUrl = '/api/request/user/obj/'
+    $scope.requestUrl = '/api/v1/user/new'
+    $scope.requestObjUrl = '/api/v1/request/schema'
 
   $scope.submit = ()->
     Crud.create($scope.ldapForm)
@@ -23,44 +23,4 @@ ldapManager.controller 'UserNewCtrl', ['$scope', 'Notice','Crud', ($scope, Notic
     $scope.notice = newMessage
   )
   
-]
-
-ldapManager.controller 'UserEditCtrl', ['$scope', '$stateParams', 'Notice', 'Crud',
-  ($scope, $stateParams, Notice, Crud)->
-    $scope.ldapForm = {}
-
-    $scope.init = () ->
-      $scope.service = Notice.init()
-      $scope.requestUrl = '/api/request/user/' + $stateParams.id
-      $scope.requestObjUrl = $scope.requestUrl + '/obj'
-      $scope.entryData = Crud.get($stateParams.id)
-
-    $scope.submit = ()->
-      Crud.update($stateParams.id, $scope.ldapForm)
-
-    $scope.$watch('service.GetMessage()', (newMessage)->
-      $scope.notice = newMessage
-    )
-
-]
-
-ldapManager.controller 'UserShowCtrl', ['$scope', '$stateParams', 'Notice', 'Crud',
-  ($scope, $stateParams, Notice, Crud)->
-    $scope.init = ()->
-      $scope.service = Notice
-      $scope.entryData = Crud.get($stateParams.id)
-
-    $scope.ensureArray = (value)->
-      return value if angular.isArray(value)
-      return [value]
-
-    $scope.$watch('service.GetMessage()', (newMessage)->
-      $scope.notice = newMessage
-    )
-  
-]
-
-ldapManager.controller 'UserDestroyCtrl', ['$scope', '$stateParams','Crud',
-  ($scope, $stateParams, Crud)->
-    Crud.delete($stateParams.id)
 ]

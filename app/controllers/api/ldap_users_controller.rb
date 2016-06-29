@@ -3,17 +3,17 @@ class Api::LdapUsersController < ApplicationController
   before_action :set_ldap_user, only: [:show, :update, :destroy]
 
 
-  # GET /ldap_users.json
+  # GET /api/ldap_users.json
   def index
     render json: LdapUser.all!(LdapUser.all), status: :ok
   end
 
-  # GET /ldap_users/1.json
+  # GET /api/ldap_users/1.json
   def show
     render json: LdapUser.json_model(set_ldap_user), status: :ok
   end
 
-  # POST /ldap_users.json
+  # POST /api/ldap_users.json
   def create
     @ldap_user = LdapUser.new_entry(ldap_user_params)
 
@@ -25,7 +25,7 @@ class Api::LdapUsersController < ApplicationController
 
   end
 
-  # PATCH/PUT /ldap_users/1.json
+  # PATCH/PUT /api/ldap_users/1.json
   def update
     if @ldap_user.save(ldap_user_params)
       render json: {notice: 'Ldap user was successfully updated.', id:@ldap_user.dn.to_s}, status: :ok
@@ -34,7 +34,7 @@ class Api::LdapUsersController < ApplicationController
     end
   end
 
-  # DELETE /ldap_users/1.json
+  # DELETE /api/ldap_users/1.json
   def destroy
     if @ldap_user.destroy
       render json: {notice: 'Ldap user was successfully deleted.'}, status: :ok

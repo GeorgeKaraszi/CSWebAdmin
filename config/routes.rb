@@ -11,80 +11,36 @@ Rails.application.routes.draw do
   root to: 'welcome#index'
 
   namespace :api, defaults: {format: :json} do
-    scope '/request' do
+    scope '/v1' do
       scope '/user' do
         get '/'     => 'requests#ldap_user'
         get '/:id'  => 'requests#ldap_user'
-        get '/:id/obj/:obj' => 'requests#ldap_user_object'
-        get '/:id/obj/' => 'requests#ldap_user_obj_list'
+        get '/new'  => 'requests#ldap_user'
       end
+
       scope '/group' do
         get '/'     => 'requests#ldap_group'
         get '/:id'  => 'requests#ldap_group'
-        get '/:id/obj/:obj' => 'requests#ldap_group_object'
+        get '/new'  => 'requests#ldap_group'
+      end
+
+      scope '/request' do
+        get '/'                   => 'requests#index'
+        get '/schema'             => 'requests#ldap_schema_list'
+        get '/schema/:schema'     => 'requests#ldap_schema_attributes'
+        get '/:id/schema'         => 'requests#ldap_schema_list'
+        get '/:id/schema/:schema' => 'requests#ldap_schema_attributes'
+        get '/:id'                => 'requests#ldap_attributes'
+
       end
     end
 
 
     resources :ldap_users, only: [:index, :show, :create, :update, :destroy]
     resources :ldap_groups, only: [:index, :show, :create, :update, :destroy]
+
   end
 
   get "*path.html" => "application#index", :layout => 0
   get "*path" => "application#index"
-
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
-
-  # You can have the root of your site routed with "root"
-  # root 'welcome#index'
-
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
-
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
-
-  # Example resource route with concerns:
-  #   concern :toggleable do
-  #     post 'toggle'
-  #   end
-  #   resources :posts, concerns: :toggleable
-  #   resources :photos, concerns: :toggleable
-
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
 end
